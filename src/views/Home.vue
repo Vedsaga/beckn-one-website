@@ -1,5 +1,14 @@
 <template>
 	<HeaderLogin />
+	<div class="hero">
+		<div class="hero-left">
+			<h1>
+				create open digital commerce
+				<span>networks with beckn</span>
+			</h1>
+		</div>
+		<img src="@/assets/svgs/girl_spinning_the_globe.svg" alt="">
+	</div>
 </template>
 <script>
 import HeaderLogin from '@/components/headers/HeaderLogin.vue';
