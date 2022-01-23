@@ -3,34 +3,26 @@
 		<nav class="header-nav">
 			<ul>
 				<li>
-					<a id="logo" class="header-link" href="#">
-						becknONE
-					</a>
+					<a id="logo" class="header-link" href="#"> becknONE </a>
 				</li>
 				<li>
-					<a class="header-link" href="#">
-						Getting Started
-					</a>
+					<a class="header-link" href="#"> Getting Started </a>
 				</li>
 				<li class="dropdown">
-				  <span class="header-link dropdown-title">
-					  Resources
-					  <img src="@/assets/svgs/dropdown.svg" alt="">
-				  </span>
+					<span class="header-link dropdown-title">
+						Resources
+						<img src="@/assets/svgs/dropdown.svg" alt="" />
+					</span>
 					<div class="dropdown-menu">
 						<ul>
 							<li>
-								<a href="#">
-									API Reference
-								</a>
+								<a href="#"> API Reference </a>
 							</li>
 							<li>
-								<a href="#"> Privacy Policy
-								</a>
+								<a href="#"> Privacy Policy </a>
 							</li>
 							<li>
-								<a href="#">
-									Terms Conditions</a>
+								<a href="#"> Terms Conditions</a>
 							</li>
 						</ul>
 					</div>
@@ -43,8 +35,8 @@
 
 <script>
 export default {
-	name: "HeaderLogin"
-}
+	name: "HeaderLogin",
+};
 </script>
 
 <style lang="scss" scoped>
@@ -72,8 +64,6 @@ export default {
 					color: var(--info-text-color);
 				}
 			}
-
-
 		}
 	}
 
@@ -85,7 +75,6 @@ export default {
 		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 		border-radius: 34px;
 		padding: 13px 34px;
-
 	}
 }
 
@@ -94,7 +83,7 @@ export default {
 	line-height: 26px;
 	font-family: Righteous, cursive;
 	font-weight: 500;
-	background: linear-gradient(90deg, #000000 0%, #9E9E9E 48.44%, #DADADA 100%);
+	background: linear-gradient(90deg, #000000 0%, #9e9e9e 48.44%, #dadada 100%);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	padding-left: 0;
@@ -112,13 +101,14 @@ export default {
 
 	&-menu {
 		display: grid;
+		z-index: 1000;
 		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 		border-radius: 8px;
 
 		position: absolute;
 		transform: scale(0);
 		transform-origin: top;
-		transition: all 0.5s ease-in-out;
+		transition: all 0.3s ease-in-out;
 		place-items: center;
 		padding: 20px;
 
@@ -145,7 +135,7 @@ export default {
 	}
 
 	img {
-		transition: all 0.5s ease-in-out;
+		transition: all 0.3s ease-in-out;
 	}
 }
 </style>
