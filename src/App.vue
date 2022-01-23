@@ -5,6 +5,7 @@
 <style lang="scss">
 :root {
   --text-color: #333;
+	--info-text-color: #9D9D9D;
   --bg-color: #fff;
 }
 
