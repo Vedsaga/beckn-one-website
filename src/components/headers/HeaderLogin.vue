@@ -101,9 +101,9 @@ export default {
 
 	&-menu {
 		display: grid;
-		z-index: 1000;
 		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 		border-radius: 8px;
+		background: #fff;
 
 		position: absolute;
 		transform: scale(0);
