@@ -49,6 +49,10 @@ export default {
 					if (res.status === 200) {
 						localStorage.setItem("user", JSON.stringify(res.data));
 					}
+				})
+				.catch((err) => {
+					console.log(err);
+					alert("Invalid username or password");
 				});
 		},
 	},
