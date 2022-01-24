@@ -17,10 +17,7 @@ export default {
 	components: {
 		HeaderLogin,
 	},
-
 };
-
-
 </script>
 <style lang="scss">
 body {
