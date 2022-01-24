@@ -6,7 +6,7 @@
 					<a id="logo" class="header-link" href="#"> becknONE </a>
 				</li>
 				<li>
-					<a class="header-link" href="#"> Getting Started </a>
+					<a class="header-link lighter" href="#"> Getting Started </a>
 				</li>
 				<li class="dropdown">
 					<span class="header-link dropdown-title">
@@ -60,8 +60,12 @@ export default {
 			li {
 				list-style: none;
 
-				&:nth-child(2) {
-					color: var(--info-text-color);
+				a {
+					transition: all 0.3s ease;
+
+					&:hover {
+						color: #00a8ff;
+					}
 				}
 			}
 		}
@@ -87,6 +91,10 @@ export default {
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	padding-left: 0;
+}
+
+.lighter {
+	color: var(--info-text-color);
 }
 
 .dropdown {
