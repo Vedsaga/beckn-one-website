@@ -29,7 +29,9 @@
 				</li>
 			</ul>
 		</nav>
-		<div class="header-right">continue login</div>
+		<router-link to="/loginPage">
+			<div class="header-right">Log IN</div>
+		</router-link>
 	</header>
 </template>
 
@@ -76,6 +78,8 @@ export default {
 	}
 
 	&-right {
+		background: var(--text-color);
+		color: var(--bg-color);
 		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 		border-radius: 34px;
 		padding: 13px 34px;

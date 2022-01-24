@@ -4,9 +4,9 @@
 
 <style lang="scss">
 :root {
-	--text-color: #333;
+	--text-color: #130F26;;
 	--info-text-color: #9d9d9d;
-	--bg-color: #fff;
+	--bg-color: #E5E5E5;
 }
 
 body {
