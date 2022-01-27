@@ -21,10 +21,11 @@
 </template>
 
 <script>
-import api_map from "@/core/api_map";
+import api_map from "@/axios/api_map";
 import HeaderLogin from "@/components/headers/PreLoginHeader.vue";
 import { mapActions } from "vuex";
-import axios from "axios";
+import axios from "@/axios";
+
 import RoundedButton from "@/components/buttons/RoundedButton";
 import CustomInput from "@/components/inputs/CustomInput";
 
@@ -47,7 +48,7 @@ export default {
 		async login() {
 			if (this.Name != null && this.Password != null) {
 				try {
-					const response = await axios.post("https://beckn-one.succinct.in" + api_map.login,
+					const response = await axios.post( api_map.login,
 							{
 								User: {
 									Name: this.Name,
@@ -77,8 +78,8 @@ export default {
 				await this.$router.push("/login");
 			}
 		}
-
 	}
+
 };
 </script>
 

@@ -4,7 +4,7 @@
 		<div class="hero-left">
 			<h1>
 				create open digital commerce
-				<span> networks with <strong>beckn</strong></span>
+				<span> network with beckn</span>
 			</h1>
 			<p>
 				BecknONE is an open network based on the beckn protocol.
@@ -38,12 +38,12 @@ export default {
 		flex-direction: column;
 		& > h1 {
 			font-size: var(--global-h1-size);
-			margin-bottom: 0.5em;
+			display: inline-block;
 			& > span {
-				font-weight: normal;
-				color: var(--yellow-b);
+				font-weight: 300;
 			}
 		}
+
 	}
 	&-right {
 		align-self: center;
