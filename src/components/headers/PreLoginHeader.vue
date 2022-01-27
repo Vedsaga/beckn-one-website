@@ -29,7 +29,7 @@
 				</li>
 			</ul>
 		</nav>
-		<router-link to="/loginPage">
+		<router-link to="/login">
 			<div class="header-right">Log IN</div>
 		</router-link>
 	</header>
