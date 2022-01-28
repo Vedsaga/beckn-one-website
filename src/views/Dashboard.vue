@@ -6,14 +6,14 @@
 		</h2>
 		<div class="main-grid">
 			<div class="main-grid-buttons">
-				<button>
+				<SquareButton>
 					Create
 					<img alt="create icon" src="@/assets/svgs/create.svg">
-				</button>
-				<button @click="showIcon">
+				</SquareButton>
+				<SquareButton @click="showIcon">
 					Remove
 					<img alt="create icon" src="@/assets/svgs/remove.svg">
-				</button>
+				</SquareButton>
 			</div>
 			<div class="main-grid-info">
 				<div class="main-grid-info-button" v-for="(product, index) in participantList" :key="index">
@@ -35,11 +35,13 @@
 import axios from "@/axios";
 import api_map from "@/axios/api_map";
 import PostLoginHeader from "@/components/headers/PostLoginHeader";
+import SquareButton from "@/components/buttons/SquareButton";
 
 export default {
 	name: "Dashboard",
 	components: {
-		PostLoginHeader
+		PostLoginHeader,
+		SquareButton,
 	},
 
 	data() {
@@ -100,33 +102,6 @@ export default {
 			height: 14.625em;
 			display: grid;
 			padding: 1rem;
-			& > button {
-				background: var(--bg-color-light);
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				font-family: "Montserrat", sans-serif;
-				font-weight: 600;
-				color: var(--text-color);
-				font-size: 13px;
-				box-shadow: var(--box-shadow);
-				width: 6rem;
-				height: 6rem;
-				border: none;
-				border-radius: var(--box-radius--large);
-				gap: 0.6rem;
-			}
-			:hover{
-				transform: scale(1.1);
-				background: var(--bg-color-light);
-				transition: all 0.3s ease-in-out;
-			}
-			:active{
-				transform: scale(0.9);
-				background: var(--bg-color-light);
-				transition: all 0.3s ease-in-out;
-			}
 		}
 
 		&-info {
@@ -187,7 +162,5 @@ export default {
 		}
 
 	}
-
 }
-
 </style>
