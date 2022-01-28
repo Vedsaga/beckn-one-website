@@ -7,13 +7,12 @@
 				<span> network with beckn</span>
 			</h1>
 			<p>
-				BecknONE is an open network based on the beckn protocol.
-				Beckn application programmers can use BecknONE portal to validate their beckn implementations.
+				BecknONE is an open network based on the beckn protocol. Beckn application programmers can use BecknONE portal
+				to validate their beckn implementations.
 			</p>
-		</div >
+		</div>
 		<div class="hero-right">
-			<img src="@/assets/svgs/girl_spinning_the_globe.svg" alt=""/>
-
+			<img src="@/assets/svgs/girl_spinning_the_globe.svg" alt="" />
 		</div>
 	</div>
 </template>
@@ -43,7 +42,6 @@ export default {
 				font-weight: 300;
 			}
 		}
-
 	}
 	&-right {
 		align-self: center;

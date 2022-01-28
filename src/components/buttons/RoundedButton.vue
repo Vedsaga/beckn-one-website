@@ -9,17 +9,17 @@ export default {
 	props: {
 		color: {
 			type: String,
-			default: "#fff"
+			default: "#fff",
 		},
 		background: {
 			type: String,
-			default: "#000"
+			default: "#000",
 		},
 		size: {
 			type: String,
-			default: "medium"
-		}
-	}
+			default: "medium",
+		},
+	},
 };
 </script>
 

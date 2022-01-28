@@ -1,29 +1,29 @@
 <template>
-	<PostLoginHeader/>
+	<PostLoginHeader />
 	<div class="main">
-		<h2>
-			Your participation information
-		</h2>
+		<h2>Your participation information</h2>
 		<div class="main-grid">
 			<div class="main-grid-buttons">
-				<SquareButton>
-					Create
-					<img alt="create icon" src="@/assets/svgs/create.svg">
-				</SquareButton>
+				<router-link to="/create-participant">
+					<SquareButton>
+						Create
+						<img alt="create icon" src="@/assets/svgs/create.svg" />
+					</SquareButton>
+				</router-link>
 				<SquareButton @click="showIcon">
 					Remove
-					<img alt="create icon" src="@/assets/svgs/remove.svg">
+					<img alt="create icon" src="@/assets/svgs/remove.svg" />
 				</SquareButton>
 			</div>
 			<div class="main-grid-info">
-				<div class="main-grid-info-button" v-for="(product, index) in participantList" :key="index">
+				<div class="main-grid-info-button" v-for="(participant, index) in participantList" :key="index">
 					<div class="main-grid-info-content">
-					<span class="main-grid-info-content-text">
-						{{ product }} com.myInfo.id let's test long string
-					</span>
+						<span class="main-grid-info-content-text">
+							{{ participant["participant_name"] }}
+						</span>
 					</div>
-					<button v-if="showRemoveIcon" id="cross">
-						<img alt="create icon" src="@/assets/svgs/cross.svg">
+					<button v-if="showRemoveIcon" id="cross" @click="removeParticipant(participant.participant_id)">
+						<img alt="create icon" src="@/assets/svgs/cross.svg" />
 					</button>
 				</div>
 			</div>
@@ -51,30 +51,43 @@ export default {
 			participantList: [],
 		};
 	},
+
 	created() {
 		this.getParticipantList();
 	},
 
 	methods: {
-		showIcon: function() {
+
+		showIcon: function () {
 			//	change the value of showRemoveIcon to true or false
 			this.showRemoveIcon = !this.showRemoveIcon;
 		},
-		remove: function() {
-			console.log("remove");
+
+		removeParticipant: async function (participantID) {
+			try {
+				const response = await axios.get(api_map.removeNetworkParticipant + participantID);
+				if (response.data.status === 200) {
+			this.participantList = this.participantList.filter(
+					(participant) => participant.participant_id !== participantID
+			);
+				}
+			} catch (error) {
+				console.log(error);
+			}
 		},
 
-		getParticipantList: async function() {
+		getParticipantList: async function () {
 			try {
-				const response = await axios.get(api_map.networkParticipantsList,
-				);
+				const response = await axios.get(api_map.networkParticipantsList);
 				if (response.status === 200) {
-					const rawData =   response.data["network_participants"];
+					const rawData = response.data["network_participants"];
 					if (rawData.length !== 0) {
 						//	for loop over rawData and extract participant_id
 						for (let index in rawData) {
-							console.log(rawData[index]["participant_id"])
-							this.participantList.push(rawData[index]["participant_id"])
+							this.participantList.push({
+								participant_id: rawData[index]["id"],
+								participant_name: rawData[index]["participant_id"],
+							});
 						}
 					}
 				}
@@ -82,14 +95,11 @@ export default {
 				console.log(e);
 			}
 		},
-
 	},
 };
-
 </script>
 
 <style lang="scss" scoped>
-
 .main {
 	margin-top: 3rem;
 
@@ -131,7 +141,7 @@ export default {
 				contain: content;
 				display: inline;
 				margin: 1rem;
-				:hover{
+				:hover {
 					transform: scale(1.1);
 					background: var(--bg-color-light);
 					transition: all 0.3s ease-in-out;
@@ -160,7 +170,6 @@ export default {
 			margin: 0 auto;
 			z-index: 1;
 		}
-
 	}
 }
 </style>

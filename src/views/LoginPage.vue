@@ -2,11 +2,8 @@
 	<HeaderLogin />
 	<div class="grid">
 		<div class="login-message">
-			<p> LogIN
-			</p>
-			<h1>
-				Welcome Back!
-			</h1>
+			<p>LogIN</p>
+			<h1>Welcome Back!</h1>
 		</div>
 		<div class="center">
 			<label for="username">username</label>
@@ -14,9 +11,7 @@
 			<label for="password">password</label>
 			<CustomInput id="password" v-model="Password" placeholder="password" />
 		</div>
-		<RoundedButton class="center" @submit.prevent="login" @click="login">
-			Log in
-		</RoundedButton>
+		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in </RoundedButton>
 	</div>
 </template>
 
@@ -29,18 +24,17 @@ import axios from "@/axios";
 import RoundedButton from "@/components/buttons/RoundedButton";
 import CustomInput from "@/components/inputs/CustomInput";
 
-
 export default {
 	name: "LoginPage",
 	components: {
 		CustomInput,
 		RoundedButton,
-		HeaderLogin
+		HeaderLogin,
 	},
 	data() {
 		return {
 			Name: null,
-			Password: null
+			Password: null,
 		};
 	},
 	methods: {
@@ -48,16 +42,13 @@ export default {
 		async login() {
 			if (this.Name != null && this.Password != null) {
 				try {
-					const response = await axios.post( api_map.login,
-							{
-								User: {
-									Name: this.Name,
-									Password: this.Password,
-									state: this.$store.getters.getState
-								}
-
-							}
-					);
+					const response = await axios.post(api_map.login, {
+						User: {
+							Name: this.Name,
+							Password: this.Password,
+							state: this.$store.getters.getState,
+						},
+					});
 					if (response.status === 200) {
 						this.setToken(response.data["api_key"]); // set token
 						this.setName(response.data["name"]); // set name
@@ -77,15 +68,12 @@ export default {
 			} else {
 				await this.$router.push("/login");
 			}
-		}
-	}
-
+		},
+	},
 };
 </script>
 
 <style lang="scss">
-
-
 .grid {
 	display: flex;
 	margin: 5% auto;
@@ -113,12 +101,10 @@ export default {
 			margin: 0 auto;
 		}
 	}
-
 }
 
 .center {
 	margin: 0 auto;
 	gap: 0;
-
 }
 </style>

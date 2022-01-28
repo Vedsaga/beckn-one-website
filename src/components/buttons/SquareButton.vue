@@ -2,17 +2,15 @@
 	<button>
 		<slot></slot>
 	</button>
-
 </template>
 
 <script>
 export default {
-	name: "SquareButton"
+	name: "SquareButton",
 };
 </script>
 
 <style lang="scss" scoped>
-
 button {
 	background: var(--bg-color-light);
 	display: flex;
@@ -30,15 +28,14 @@ button {
 	border-radius: var(--box-radius--large);
 	gap: 0.6rem;
 }
-:hover{
+:hover {
 	transform: scale(1.1);
 	background: var(--bg-color-light);
 	transition: all 0.3s ease-in-out;
 }
-:active{
+:active {
 	transform: scale(0.9);
 	background: var(--bg-color-light);
 	transition: all 0.3s ease-in-out;
 }
-
 </style>

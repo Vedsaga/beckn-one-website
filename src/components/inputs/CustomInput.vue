@@ -1,10 +1,6 @@
 <!-- CustomInput.vue -->
 <template>
-		<input
-				class="field-design input-label"
-				type="text"
-				:value="modelValue"
-				@input="updateModelValue" />
+	<input class="field-design input-label" type="text" :value="modelValue" @input="updateModelValue" />
 </template>
 
 <script>
@@ -17,16 +13,15 @@ export default {
 		},
 		placeholder: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	methods: {
 		updateModelValue() {
 			this.$emit("update:modelValue", this.$el.value);
 		},
-	}
-
+	},
 };
 </script>
 <style lang="scss" scoped>
@@ -37,11 +32,10 @@ export default {
 	flex-direction: row;
 	align-items: flex-start;
 	padding: 0 1.5em;
-};
+}
 .input-label {
 	display: flex;
 	align-items: flex-start;
 	margin-bottom: 2.2em;
-};
-
+}
 </style>

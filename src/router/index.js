@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import LoginPage from "../views/LoginPage.vue";
 import Dashboard from "@/views/Dashboard";
-
+import CreateParticipant from "@/views/CreateParticipant";
 
 const routes = [
     {
@@ -11,9 +11,8 @@ const routes = [
         component: Home,
         meta: {
             title: "Home",
-            requiresAuth: true,
-
-        }
+            requiresAuth: false,
+        },
     },
     {
         path: "/login",
@@ -21,8 +20,8 @@ const routes = [
         component: LoginPage,
         meta: {
             title: "Login",
-            requiresAuth: false
-        }
+            requiresAuth: false,
+        },
     },
     {
         path: "/dashboard",
@@ -30,8 +29,18 @@ const routes = [
         component: Dashboard,
         meta: {
             title: "Dashboard",
-            requiresAuth: true
-        }
+            requiresAuth: true,
+        },
+    },
+
+    {
+        path: "/create-participant",
+        name: "CreateParticipant",
+        component: CreateParticipant,
+        meta: {
+            title: "Create Participant",
+            requiresAuth: true,
+        },
     },
 ];
 

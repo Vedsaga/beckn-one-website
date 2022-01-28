@@ -11,16 +11,16 @@
 	--global-font-weight: 400;
 	--text-letter-spacing: 0.1rem;
 	--text-letter-p: 0.06rem;
-	--text-color: #130F26;
-	--info-text-color: #9D9D9D;
-	--bg-color: #E5E5E5;
-	--bg-color-light: #F5F7FB;
+	--text-color: #130f26;
+	--info-text-color: #9d9d9d;
+	--bg-color: #e5e5e5;
+	--bg-color-light: #f5f7fb;
 	--black-color: #000;
-	--white-color: #FFF;
-	--red-color: #E63946;
-	--green-color: #2AE2BD;;
+	--white-color: #fff;
+	--red-color: #e63946;
+	--green-color: #2ae2bd;
 	--blue-color: #00a0ff;
-	--yellow-color: #FCA311;
+	--yellow-color: #fca311;
 	--box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 	--box-shadow-hover: 0px 0px 10px rgba(0, 0, 0, 0.21);
 	--box-radius--normal: 8px;
@@ -45,7 +45,6 @@ body {
 		font-weight: 600;
 		letter-spacing: var(--text-letter-p);
 		font-family: "Montserrat", sans-serif;
-
 	}
 
 	a {
@@ -58,7 +57,7 @@ body {
 	}
 }
 
-button{
+button {
 	outline: none;
 }
 

@@ -1,7 +1,6 @@
 import { createStore } from "vuex";
 
 const store = createStore({
-
     state() {
         return {
             token: null,
@@ -30,28 +29,31 @@ const store = createStore({
         setState(state, payload) {
             state.state = payload;
         },
+        setParticipantList(state, payload) {
+            state.participantList = payload;
+        },
     },
     getters: {
         getToken(state) {
-        //    if token is not null then return token else set state to NotLoggedIn
+            //    if token is not null then return token else set state to NotLoggedIn
             if (state.token) {
                 return state.token;
             } else {
-                state.state = 'notLoggedIn';
+                state.state = "notLoggedIn";
             }
         },
         getName(state) {
             if (state.name) {
                 return state.name;
             } else {
-                state.state = 'notLoggedIn';
+                state.state = "notLoggedIn";
             }
         },
         getId(state) {
             if (state.id) {
                 return state.id;
             } else {
-                state.state = 'notLoggedIn';
+                state.state = "notLoggedIn";
             }
         },
         getError(state) {
@@ -80,6 +82,5 @@ const store = createStore({
     },
 
 });
-
 
 export default store;
