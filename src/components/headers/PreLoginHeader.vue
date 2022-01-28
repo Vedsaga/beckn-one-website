@@ -81,8 +81,8 @@ export default {
 		background: var(--text-color);
 		color: var(--bg-color);
 		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
-		border-radius: 34px;
-		padding: 13px 34px;
+		border-radius: 2.1rem;
+		padding: 1rem 2rem;
 	}
 }
 

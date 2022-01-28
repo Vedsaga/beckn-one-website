@@ -50,6 +50,7 @@ body {
 
 	a {
 		font-size: var(--global-a-size);
+		text-decoration: none;
 		color: var(--text-color);
 		:hover {
 			color: var(--blue-color);
@@ -59,11 +60,6 @@ body {
 
 button{
 	outline: none;
-}
-
-a {
-	text-decoration: none;
-	color: inherit;
 }
 
 input {
