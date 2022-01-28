@@ -6,7 +6,7 @@
 		</h2>
 		<div class="main-grid">
 			<div class="main-grid-buttons">
-				<button >
+				<button>
 					Create
 					<img alt="create icon" src="@/assets/svgs/create.svg">
 				</button>
@@ -119,6 +119,11 @@ export default {
 			}
 			:hover{
 				transform: scale(1.1);
+				background: var(--bg-color-light);
+				transition: all 0.3s ease-in-out;
+			}
+			:active{
+				transform: scale(0.9);
 				background: var(--bg-color-light);
 				transition: all 0.3s ease-in-out;
 			}
