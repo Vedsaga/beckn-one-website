@@ -11,57 +11,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.class-button {
+.curved-button {
 	position: relative;
-	display: inline-block;
-	padding: 0.5rem 1rem;
-	border-radius: 0.25rem;
-	background-color: #fff;
-	color: #000;
+	display: flex;
+	width: max-content;
+	padding: 0.9em 2em;
+	border-radius: 1.25rem;
+	background: var(--orange-gardient);
+	box-shadow: var(--box-shadow-hover);
+	color: var(--white-color);
 	cursor: pointer;
-	transition: all 0.2s ease-in-out;
-	text-decoration: none;
+	transition: all 0.3s ease-in-out;
 	text-align: center;
-	font-size: 1rem;
-	line-height: 1.5;
-	font-weight: 400;
-	border: 1px solid #000;
+	font-size: 0.8125rem;
+	letter-spacing: 0.02em;
+	line-height: 1rem;
+	font-weight: 600;
 	outline: none;
+
 	&:hover {
-		background-color: #000;
-		color: #fff;
+		transition: all 0.3s ease-in-out;
+		transform: scale(1.1);
 	}
 	&:active {
 		transform: scale(0.95);
 	}
-	&:focus {
-		box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-	}
 	&:disabled {
-		opacity: 0.5;
 		cursor: not-allowed;
-	}
-	&:disabled:hover {
-		background-color: #fff;
-		color: #000;
-	}
-	&:disabled:active {
-		transform: scale(0.95);
-	}
-	&:disabled:focus {
-		box-shadow: none;
-	}
-	&:focus:not(:focus-visible) {
-		box-shadow: none;
-	}
-	&:focus-visible {
-		box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-	}
-	&:focus-visible:not(:focus) {
-		box-shadow: none;
-	}
-	&:focus-visible:focus {
-		box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+		background: #9D9D9D;
+		opacity: 0.55;
 	}
 }
 </style>

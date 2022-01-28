@@ -1,5 +1,5 @@
 <template>
-	<PostLoginHeader />
+	<PostLoginHeader class="fix" />
 	<div class="main">
 		<h2>Your participation information</h2>
 		<div class="main-grid">
@@ -100,6 +100,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .main {
 	margin-top: 3rem;
 

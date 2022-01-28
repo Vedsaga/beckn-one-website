@@ -11,16 +11,16 @@
 	--global-font-weight: 400;
 	--text-letter-spacing: 0.1rem;
 	--text-letter-p: 0.06rem;
-	--text-color: #130f26;
+	--text-color: #16161B;
 	--info-text-color: #9d9d9d;
 	--bg-color: #e5e5e5;
 	--bg-color-light: #f5f7fb;
-	--black-color: #000;
-	--white-color: #fff;
+	--black-color: #101010;
+	--white-color:#f5f7fb;
 	--red-color: #e63946;
 	--green-color: #2ae2bd;
 	--blue-color: #00a0ff;
-	--yellow-color: #fca311;
+	--orange-gardient: linear-gradient(90deg, #F15A24 0%, #F68F1F 98.29%, #F68F1F 98.29%);
 	--box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 	--box-shadow-hover: 0px 0px 10px rgba(0, 0, 0, 0.21);
 	--box-radius--normal: 8px;
@@ -29,7 +29,7 @@
 }
 
 body {
-	padding: 0 162px;
+	padding: 0 10em;
 	margin: 0 auto;
 	font-family: "Montserrat", sans-serif;
 	background-color: var(--bg-color);
