@@ -80,7 +80,6 @@ const store = createStore({
             commit("setState", payload);
         },
     },
-
 });
 
 export default store;

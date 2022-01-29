@@ -113,7 +113,6 @@ export default {
 		align-items: center;
 		cursor: pointer;
 
-
 		ul {
 			display: flex;
 			gap: 3em;

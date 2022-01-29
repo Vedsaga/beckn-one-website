@@ -1,7 +1,7 @@
 <template>
-	<div class="curved-button">
+	<button class="curved-button" type="submit">
 		<slot></slot>
-	</div>
+	</button>
 </template>
 
 <script>
@@ -14,21 +14,27 @@ export default {
 .curved-button {
 	position: relative;
 	display: flex;
+	align-items: center;
 	width: max-content;
-	padding: 0.9em 2em;
-	border-radius: 1.25rem;
+	height: max-content;
+	padding: 1em 2em;
+	gap: 1em;
+
+	border-radius: 2.5em; /* how to set up border-radius equal to height of the button? */
 	background: var(--orange-gardient);
 	box-shadow: var(--box-shadow-hover);
 	color: var(--white-color);
 	cursor: pointer;
 	transition: all 0.3s ease-in-out;
 	text-align: center;
-	font-size: 0.8125rem;
+	font-size: 0.812rem;
 	letter-spacing: 0.02em;
 	line-height: 1rem;
 	font-weight: 600;
 	outline: none;
-
+	text-decoration: none;
+	font-family: "Montserrat", sans-serif;
+	border: none;
 	&:hover {
 		transition: all 0.3s ease-in-out;
 		transform: scale(1.1);
@@ -38,8 +44,11 @@ export default {
 	}
 	&:disabled {
 		cursor: not-allowed;
-		background: #9D9D9D;
+		background: #9d9d9d;
 		opacity: 0.55;
+		&:hover {
+			transform: none;
+		}
 	}
 }
 </style>

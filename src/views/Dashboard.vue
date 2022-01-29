@@ -57,7 +57,6 @@ export default {
 	},
 
 	methods: {
-
 		showIcon: function () {
 			//	change the value of showRemoveIcon to true or false
 			this.showRemoveIcon = !this.showRemoveIcon;
@@ -67,9 +66,9 @@ export default {
 			try {
 				const response = await axios.get(api_map.removeNetworkParticipant + participantID);
 				if (response.data.status === 200) {
-			this.participantList = this.participantList.filter(
-					(participant) => participant.participant_id !== participantID
-			);
+					this.participantList = this.participantList.filter(
+						(participant) => participant.participant_id !== participantID
+					);
 				}
 			} catch (error) {
 				console.log(error);
@@ -100,7 +99,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .main {
 	margin-top: 3rem;
 

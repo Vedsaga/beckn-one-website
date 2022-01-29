@@ -11,16 +11,16 @@
 	--global-font-weight: 400;
 	--text-letter-spacing: 0.1rem;
 	--text-letter-p: 0.06rem;
-	--text-color: #16161B;
+	--text-color: #16161b;
 	--info-text-color: #9d9d9d;
 	--bg-color: #e5e5e5;
 	--bg-color-light: #f5f7fb;
 	--black-color: #101010;
-	--white-color:#f5f7fb;
+	--white-color: #f5f7fb;
 	--red-color: #e63946;
 	--green-color: #2ae2bd;
 	--blue-color: #00a0ff;
-	--orange-gardient: linear-gradient(90deg, #F15A24 0%, #F68F1F 98.29%, #F68F1F 98.29%);
+	--orange-gardient: linear-gradient(90deg, #f15a24 0%, #f68f1f 98.29%, #f68f1f 98.29%);
 	--box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 	--box-shadow-hover: 0px 0px 10px rgba(0, 0, 0, 0.21);
 	--box-radius--normal: 8px;
@@ -79,6 +79,7 @@ input {
 		font-family: var(global-font-size);
 		font-weight: 600;
 		color: var(--text-color);
+		transition: all 0.3s ease-in-out;
 	}
 }
 </style>
