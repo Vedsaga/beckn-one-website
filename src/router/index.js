@@ -1,48 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
-import LoginPage from "../views/LoginPage.vue";
-import Dashboard from "@/views/Dashboard";
-import CreateParticipant from "@/views/CreateParticipant";
-
-const routes = [
-    {
-        path: "/",
-        name: "Home",
-        component: Home,
-        meta: {
-            title: "Home",
-            requiresAuth: false,
-        },
-    },
-    {
-        path: "/login",
-        name: "LoginPage",
-        component: LoginPage,
-        meta: {
-            title: "Login",
-            requiresAuth: false,
-        },
-    },
-    {
-        path: "/dashboard",
-        name: "Dashboard",
-        component: Dashboard,
-        meta: {
-            title: "Dashboard",
-            requiresAuth: true,
-        },
-    },
-
-    {
-        path: "/create-participant",
-        name: "CreateParticipant",
-        component: CreateParticipant,
-        meta: {
-            title: "Create Participant",
-            requiresAuth: true,
-        },
-    },
-];
+import routes from "@/router/routes";
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
