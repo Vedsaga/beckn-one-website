@@ -12,7 +12,7 @@
 			</div>
 			<div class="form-group">
 				<label for="password">password</label>
-				<CustomInput id="password" v-model="Password" placeholder="password" />
+				<CustomInput id="password" v-model="Password" placeholder="password" type="password" />
 			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
