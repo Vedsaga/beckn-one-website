@@ -1,15 +1,19 @@
 <template>
 	<HeaderLogin />
-	<div class="grid">
-		<div class="login-message">
+	<div class="form">
+		<div class="form-head">
 			<p>LogIN</p>
 			<h1>Welcome Back!</h1>
 		</div>
-		<div class="center">
-			<label for="username">username</label>
-			<CustomInput id="username" v-model="Name" placeholder="username" />
-			<label for="password">password</label>
-			<CustomInput id="password" v-model="Password" placeholder="password" />
+		<div class="form-body">
+			<div class="form-group">
+				<label for="username">username</label>
+				<CustomInput id="username" v-model="Name" placeholder="username" />
+			</div>
+			<div class="form-group">
+				<label for="password">password</label>
+				<CustomInput id="password" v-model="Password" placeholder="password" />
+			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
 	</div>
@@ -70,37 +74,34 @@ export default {
 </script>
 
 <style lang="scss">
-.grid {
-	display: flex;
-	margin: 5% auto;
-	align-items: flex-start;
-	flex-direction: column;
-	justify-content: start;
-	gap: 3rem;
+.form {
+	display: grid;
+	place-items: center;
+	grid-gap: 1em;
 
-	& > .login-message {
-		display: grid;
-		align-items: center;
-		margin: 0 auto;
-
-		& > p {
-			font-size: 1.5em;
-			font-weight: bold;
-			color: var(--text-color);
-			margin: 0;
-		}
-
-		& > h1 {
+	&-head {
+		h1 {
 			font-size: 2em;
 			font-weight: bold;
-			color: var(--text-color);
 			margin: 0 auto;
+			color: var(--text-color);
+		}
+
+		p {
+			margin: 0 auto;
+			color: var(--text-color);
+			font-size: 1.5em;
 		}
 	}
-}
 
-.center {
-	margin: 0 auto;
-	gap: 0;
+	&-body {
+		display: grid;
+		grid-gap: 1em;
+	}
+
+	&-group {
+		display: grid;
+		grid-gap: 0.5em;
+	}
 }
 </style>
