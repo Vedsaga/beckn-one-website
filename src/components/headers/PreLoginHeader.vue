@@ -47,17 +47,21 @@ export default {
 	align-items: center;
 	justify-content: space-between;
 	height: 110px;
+	gap: 1em;
 
 	font-weight: 600;
 	font-size: 15px;
 	line-height: 18px;
 
 	&-nav {
+		width: 100%;
+
 		& > ul {
 			display: flex;
 			align-items: center;
 			padding-left: 0;
-			gap: 69px;
+			justify-content: space-between;
+			max-width: 540px;
 
 			li {
 				list-style: none;
@@ -75,6 +79,7 @@ export default {
 
 	&-link {
 		padding: 5px 10px;
+		white-space: pre;
 	}
 
 	&-right {
@@ -83,6 +88,7 @@ export default {
 		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 		border-radius: 2.1rem;
 		padding: 1rem 2rem;
+		white-space: pre;
 	}
 }
 

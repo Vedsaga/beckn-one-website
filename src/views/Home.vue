@@ -31,6 +31,8 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	margin: 0 auto;
+	gap: 1em;
+
 	&-left {
 		display: inline-flex;
 		max-width: 50%;
