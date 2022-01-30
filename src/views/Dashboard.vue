@@ -110,8 +110,8 @@ export default {
 
 	&-grid {
 		display: flex;
-		width: 50%;
 		justify-content: space-between;
+		gap: 1em;
 
 		&-buttons {
 			height: 14.625em;
@@ -120,7 +120,9 @@ export default {
 		}
 
 		&-info {
-			width: 50%;
+			display: flex;
+			flex-flow: row wrap;
+			width: 100%;
 			gap: 3rem;
 
 			&-content {
@@ -143,7 +145,6 @@ export default {
 			}
 
 			&-button {
-				contain: content;
 				display: inline;
 				margin: 1rem;
 				:hover {
