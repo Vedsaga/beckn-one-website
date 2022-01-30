@@ -35,17 +35,20 @@ export default {
 	text-decoration: none;
 	font-family: "Montserrat", sans-serif;
 	border: none;
+
 	&:hover {
-		transition: all 0.3s ease-in-out;
 		transform: scale(1.1);
 	}
+
 	&:active {
 		transform: scale(0.95);
 	}
+
 	&:disabled {
 		cursor: not-allowed;
 		background: #9d9d9d;
 		opacity: 0.55;
+
 		&:hover {
 			transform: none;
 		}
