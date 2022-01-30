@@ -62,13 +62,18 @@ export default {
 			this.showRemoveIcon = !this.showRemoveIcon;
 		},
 
+		removeParticipantLocally: function (participant_id) {
+			//	remove the participant from the local list
+			this.participantList = this.participantList.filter(
+				(participant) => participant.participant_id !== participant_id
+			);
+		},
+
 		removeParticipant: async function (participantID) {
 			try {
 				const response = await axios.get(api_map.removeNetworkParticipant + participantID);
-				if (response.data.status === 200) {
-					this.participantList = this.participantList.filter(
-						(participant) => participant.participant_id !== participantID
-					);
+				if (response.status === 200) {
+					this.removeParticipantLocally(participantID);
 				}
 			} catch (error) {
 				console.log(error);
