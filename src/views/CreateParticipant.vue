@@ -126,15 +126,16 @@ export default {
 				})
 				.then((response) => {
 					// if response.status is 200 then route to the dashboard
-					if (response.status === 200) {
-						this.participantDetails = response.data["network_participants"][0];
-						this.participantInfoDone = true;
-						this.networkRolePage = true;
-						this.currentTab = "networkRolePage";
-						this.subscriberId = this.participantID;
-					} else {
+					if (response.status !== 200) {
 						console.log("Error: " + response.status);
+						return;
 					}
+
+					this.participantDetails = response.data["network_participants"][0];
+					this.participantInfoDone = true;
+					this.networkRolePage = true;
+					this.currentTab = "networkRolePage";
+					this.subscriberId = this.participantID;
 				})
 				.catch((error) => {
 					console.log(error);
@@ -149,21 +150,23 @@ export default {
 				.get(api_map.networkDomainsList)
 				.then((response) => {
 					// if response.status is 200 then route to the dashboard
-					if (response.status === 200) {
-						const rawData = response.data["network_domains"];
-						if (rawData.length !== 0) {
-							this.ListOfNetworkDomains = [];
-							this.ListOfMapOfNetworkDomains = [];
-							for (let index in rawData) {
-								this.ListOfMapOfNetworkDomains.push({
-									domain: rawData[index]["name"],
-									network_domain_id: rawData[index]["id"],
-								});
-								this.ListOfNetworkDomains.push(rawData[index]["name"]);
-							}
-						}
-					} else {
+					if (response.status !== 200) {
 						console.log("Error: " + response.status);
+						return;
+					}
+
+					const rawData = response.data["network_domains"];
+					if (rawData.length === 0) return;
+
+					this.ListOfNetworkDomains = [];
+					this.ListOfMapOfNetworkDomains = [];
+
+					for (let index in rawData) {
+						this.ListOfMapOfNetworkDomains.push({
+							domain: rawData[index]["name"],
+							network_domain_id: rawData[index]["id"],
+						});
+						this.ListOfNetworkDomains.push(rawData[index]["name"]);
 					}
 				})
 				.catch((error) => {
@@ -191,14 +194,15 @@ export default {
 					network_participant_id: this.participantDetails["id"],
 				})
 				.then((response) => {
-					if (response.status === 200) {
-						this.networkRoleDetails = response.data["network_roles"][0];
-						this.networkRoleDone = true;
-						this.participationKeyPage = true;
-						this.currentTab = "participationKeyPage";
-					} else {
+					if (response.status !== 200) {
 						console.log("Error: " + response.status);
+						return;
 					}
+
+					this.networkRoleDetails = response.data["network_roles"][0];
+					this.networkRoleDone = true;
+					this.participationKeyPage = true;
+					this.currentTab = "participationKeyPage";
 				})
 				.catch((error) => {
 					console.log(error);

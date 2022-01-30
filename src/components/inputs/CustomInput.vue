@@ -34,8 +34,6 @@ export default {
 	padding: 0 1.5em;
 }
 .input-label {
-	display: flex;
-	align-items: flex-start;
 	margin-bottom: 2.2em;
 }
 </style>

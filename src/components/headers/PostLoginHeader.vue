@@ -127,14 +127,18 @@ export default {
 				display: flex;
 				gap: 0.5em;
 				list-style: none;
+				transition: all 0.3s ease-in-out;
+
+				svg {
+					transition: all 0.3s ease-in-out;
+					overflow: visible;
+				}
 
 				&:hover {
 					transform: scale(1.05);
-					transition: all 0.3s ease-in-out;
 					color: var(--blue-color);
 
 					svg {
-						transition: all 0.3s ease-in-out;
 						fill: var(--blue-color);
 					}
 				}
@@ -162,6 +166,12 @@ export default {
 }
 
 #logout {
+	transition: all 0.3s ease-in-out;
+
+	svg {
+		transition: all 0.3s ease-in-out;
+	}
+
 	&:hover {
 		svg {
 			fill: #df0000;

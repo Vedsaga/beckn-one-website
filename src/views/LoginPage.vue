@@ -1,15 +1,19 @@
 <template>
 	<HeaderLogin />
-	<div class="grid">
-		<div class="login-message">
+	<div class="form">
+		<div class="form-head">
 			<p>LogIN</p>
 			<h1>Welcome Back!</h1>
 		</div>
-		<div class="center">
-			<label for="username">username</label>
-			<CustomInput id="username" v-model="Name" placeholder="username" />
-			<label for="password">password</label>
-			<CustomInput id="password" v-model="Password" placeholder="password" />
+		<div class="form-body">
+			<div class="form-group">
+				<label for="username">username</label>
+				<CustomInput id="username" v-model="Name" placeholder="username" />
+			</div>
+			<div class="form-group">
+				<label for="password">password</label>
+				<CustomInput id="password" v-model="Password" placeholder="password" type="password" />
+			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
 	</div>
@@ -29,78 +33,75 @@ export default {
 	components: {
 		CustomInput,
 		RoundedButton,
-		HeaderLogin
+		HeaderLogin,
 	},
 	data() {
 		return {
 			Name: null,
-			Password: null
+			Password: null,
 		};
 	},
 	methods: {
 		...mapActions(["setToken", "setName", "setId", "setError", "setState"]),
 		async login() {
 			await axios
-					.post("https://beckn-one.succinct.in/" + api_map.login, {
-						User: {
-							Name: this.Name,
-							Password: this.Password
-						}
-					})
-					.then((response) => {
-						if (response.status === 200) {
-							this.setToken(response.data["api_key"]); // set token
-							this.setName(response.data["name"]); // set name
-							this.setId(response.data["id"]); // set id
-							this.setState("logged"); // set state
-						}
-					})
-					.catch((err) => {
-						console.log(err);
-						alert("Invalid username or password");
-					});
+				.post("https://beckn-one.succinct.in/" + api_map.login, {
+					User: {
+						Name: this.Name,
+						Password: this.Password,
+					},
+				})
+				.then((response) => {
+					if (response.status !== 200) return;
+
+					this.setToken(response.data["api_key"]);
+					this.setName(response.data["name"]);
+					this.setId(response.data["id"]);
+					this.setState("logged");
+				})
+				.catch((err) => {
+					console.log(err);
+					alert("Invalid username or password");
+				});
 			if (this.$store.getters.getState === "logged" && this.$store.getters.getToken != null) {
 				await this.$router.push("/dashboard");
 			} else {
 				await this.$router.push("/login");
 			}
-		}
-	}
+		},
+	},
 };
 </script>
 
 <style lang="scss">
-.grid {
-	display: flex;
-	margin: 5% auto;
-	align-items: flex-start;
-	flex-direction: column;
-	justify-content: start;
-	gap: 3rem;
+.form {
+	display: grid;
+	place-items: center;
+	grid-gap: 1em;
 
-	& > .login-message {
-		display: grid;
-		align-items: center;
-		margin: 0 auto;
-
-		& > p {
-			font-size: 1.5em;
-			font-weight: bold;
-			color: var(--text-color);
-			margin: 0;
-		}
-
-		& > h1 {
+	&-head {
+		h1 {
 			font-size: 2em;
 			font-weight: bold;
-			color: var(--text-color);
 			margin: 0 auto;
+			color: var(--text-color);
+		}
+
+		p {
+			margin: 0 auto;
+			color: var(--text-color);
+			font-size: 1.5em;
 		}
 	}
-}
 
-.center {
-	margin: 0 auto;
-	gap: 0;
+	&-body {
+		display: grid;
+		grid-gap: 1em;
+	}
+
+	&-group {
+		display: grid;
+		grid-gap: 0.5em;
+	}
 }
 </style>

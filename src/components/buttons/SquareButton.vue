@@ -27,15 +27,16 @@ button {
 	border: none;
 	border-radius: var(--box-radius--large);
 	gap: 0.6rem;
-}
-:hover {
-	transform: scale(1.1);
-	background: var(--bg-color-light);
 	transition: all 0.3s ease-in-out;
-}
-:active {
-	transform: scale(0.9);
-	background: var(--bg-color-light);
-	transition: all 0.3s ease-in-out;
+
+	&:hover {
+		transform: scale(1.1);
+		background: var(--bg-color-light);
+	}
+
+	&:active {
+		transform: scale(0.9);
+		background: var(--bg-color-light);
+	}
 }
 </style>
