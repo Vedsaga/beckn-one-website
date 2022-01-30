@@ -81,23 +81,24 @@ export default {
 		},
 
 		getParticipantList: async function () {
-			try {
-				const response = await axios.get(api_map.networkParticipantsList);
-				if (response.status === 200) {
+			await axios
+				.get(api_map.networkParticipantsList)
+				.then((response) => {
+					if (response.status !== 200) return;
+
 					const rawData = response.data["network_participants"];
-					if (rawData.length !== 0) {
-						//	for loop over rawData and extract participant_id
-						for (let index in rawData) {
-							this.participantList.push({
-								participant_id: rawData[index]["id"],
-								participant_name: rawData[index]["participant_id"],
-							});
-						}
+					if (rawData.length === 0) return;
+
+					for (let index in rawData) {
+						this.participantList.push({
+							participant_id: rawData[index]["id"],
+							participant_name: rawData[index]["participant_id"],
+						});
 					}
-				}
-			} catch (e) {
-				console.log(e);
-			}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
 		},
 	},
 };
