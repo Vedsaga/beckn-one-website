@@ -30,6 +30,7 @@
 		</div>
 		<div class="main-content">
 			<section v-if="currentTab === 'participantInfoPage'">
+				<Dropdown :element-of-list="ListOfRoleStatus"></Dropdown>
 				<label for="ParticipantID">Please Enter Participant ID</label>
 				<CustomInput id="ParticipantID" placeholder="example.myID.com" v-model="participantID" />
 				<CurvedButton @click="newNetworkParticipant"> Save & Next</CurvedButton>
@@ -85,6 +86,7 @@ import api_map from "@/axios/api_map";
 import PostLoginHeader from "@/components/headers/PostLoginHeader";
 import CustomInput from "@/components/inputs/CustomInput";
 import CurvedButton from "@/components/buttons/CurvedButton";
+import Dropdown from "@/components/dropdown/dropdown";
 
 export default {
 	name: "CreateParticipant",
@@ -92,6 +94,7 @@ export default {
 		PostLoginHeader,
 		CustomInput,
 		CurvedButton,
+		Dropdown,
 	},
 	data() {
 		return {
@@ -214,7 +217,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dropdown {
+.custom-dropdown {
 	display: flex;
 	width: 21em;
 	height: 4em;
