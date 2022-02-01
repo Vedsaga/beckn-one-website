@@ -7,12 +7,10 @@
 		</div>
 		<div class="form-body">
 			<div class="form-group">
-				<label for="username">username</label>
-				<CustomInput id="username" v-model="Name" placeholder="username"  :send-value="getUsername"/>
+				<CustomInput id="username" v-model="Name" placeholder="username"  :get-value="getUsername" label-id="username" label-text="username" type="username"/>
 			</div>
 			<div class="form-group">
-				<label for="password">password</label>
-				<CustomInput id="password" v-model="Password" placeholder="password" type="password"  :send-value="getPassword"/>
+				<CustomInput id="password" v-model="Password" placeholder="password" type="password"  :get-value="getPassword" label-id="password" label-text="password" />
 			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
@@ -57,7 +55,7 @@ export default {
 		},
 		async login() {
 			await axios
-				.post("https://beckn-one.succinct.in" + api_map.login, {
+				.post("https://beckn-one.succinct.in/" + api_map.login, {
 					User: {
 						Name: this.Name,
 						Password: this.Password,
@@ -65,7 +63,6 @@ export default {
 				})
 				.then((response) => {
 					if (response.status !== 200) return;
-
 					this.setToken(response.data["api_key"]);
 					this.setName(response.data["name"]);
 					this.setId(response.data["id"]);

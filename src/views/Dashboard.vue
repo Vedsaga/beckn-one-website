@@ -1,12 +1,17 @@
 <template>
-	<div class="modal-wrapper" :class="{ show: false }">
+	<div class="modal-wrapper" :class="{show}">
 		<div class="modal">
 			<h1>Want to Delete?</h1>
 			<p>Are you sure you want to delete?</p>
-
 			<div class="modal-buttons">
-				<a id="cancel">cancel</a>
-				<a id="delete">yes</a>
+				<button
+						id="cancel"
+						@click="changeShow"
+				>cancel</button>
+				<button
+						id="delete"
+						@click="removeParticipant(removeParticipantId)"
+				>yes</button>
 			</div>
 		</div>
 	</div>
@@ -33,14 +38,14 @@
 						<span class="main-grid-info-content-text">
 							{{ participant["participant_name"] }}
 						</span>
+						<button
+								:class="{ 'cross-show': showRemoveIcon }"
+								class="cross"
+								@click="changeShow(participant.participant_id)"
+						>
+							<img alt="create icon" src="@/assets/svgs/cross.svg" />
+						</button>
 					</div>
-					<button
-						:class="{ 'cross-show': showRemoveIcon }"
-						class="cross"
-						@click="removeParticipant(participant.participant_id)"
-					>
-						<img alt="create icon" src="@/assets/svgs/cross.svg" />
-					</button>
 				</div>
 			</div>
 		</div>
@@ -62,13 +67,19 @@ export default {
 
 	data() {
 		return {
-			id: this.$store.getters.getId,
+			id: localStorage.getItem("id"),
 			showRemoveIcon: false,
 			participantList: [],
+			removeParticipantId: null,
+			show: false,
+
 		};
 	},
 
 	created() {
+		// axios.get(api_map.currentUser, ).then((response) => {
+		// 	this.participantList = response.data;
+		// });
 		this.getParticipantList();
 	},
 
@@ -76,6 +87,11 @@ export default {
 		showIcon: function () {
 			//	change the value of showRemoveIcon to true or false
 			this.showRemoveIcon = !this.showRemoveIcon;
+		},
+
+		changeShow: function (id) {
+			this.show = !this.show;
+			this.removeParticipantId = id;
 		},
 
 		removeParticipantLocally: function (participant_id) {
@@ -90,6 +106,7 @@ export default {
 				const response = await axios.get(api_map.removeNetworkParticipant + participantID);
 				if (response.status === 200) {
 					this.removeParticipantLocally(participantID);
+					this.changeShow();
 				}
 			} catch (error) {
 				console.log(error);
@@ -172,6 +189,9 @@ export default {
 	font-size: 1em;
 	line-height: 1.2em;
 	color: #02a786;
+	border: none;
+	outline: none;
+	background: transparent;
 }
 
 #delete {
@@ -181,7 +201,8 @@ export default {
 	font-size: 1em;
 	line-height: 1.2em;
 	color: #ffffff;
-
+	border: none;
+	outline: none;
 	background: linear-gradient(90deg, #b00000 0%, #f90000 98.26%, #df0000 98.27%);
 	border-radius: 0.5em;
 	padding: 0.5em 1.5em;
@@ -216,12 +237,11 @@ export default {
 				height: 1.8rem;
 				overflow: hidden;
 				text-overflow: ellipsis;
-
+				text-align: start;
 				& > span {
 					white-space: nowrap;
 					display: inline;
-					align-self: center;
-					margin: 0 auto;
+					text-overflow: ellipsis;
 				}
 			}
 

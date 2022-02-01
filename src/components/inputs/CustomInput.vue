@@ -1,13 +1,15 @@
 <!-- CustomInput.vue -->
 <template>
 	<div class="custom-input">
+		<label for="{{labelId}}">{{labelText}}</label>
 		<input
+				id="{{labelId}}"
 				class="custom-input-design input-label"
-				type="text"
 				:placeholder="placeholder"
 				:value="value"
 				@input ="setValue($event.target.value)"
-				@change="sendValue(value)"
+				@change="getValue(value)"
+				type="{{type}}"
 		/>
 	</div>
 </template>
@@ -21,10 +23,24 @@ export default {
 			required: true,
 		},
 
-		sendValue: {
+		getValue: {
 			type: Function,
 			required: true,
 		},
+
+		labelId: {
+			type: String,
+			required: true,
+		},
+		labelText: {
+			type: String,
+			required: true,
+		},
+		type: {
+			type: String,
+			required: true,
+		},
+
 	},
 
 	data() {

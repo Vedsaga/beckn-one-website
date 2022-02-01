@@ -3,55 +3,60 @@
 	<div class="main">
 		<div class="main-progress">
 			<CurvedButton
-				@click="setTab('participantInfoPage')"
-				:class="[participantInfoPage && participantInfoDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+					@click="setTab('participantInfoPage')"
+					:class="[participantInfoPage && participantInfoDone ? 'main-progress-tab-done' : 'main-progress-tab']"
 			>
 				Participant Info
 				<img v-if="participantInfoDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 			<div :class="[participantInfoDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
 			<CurvedButton
-				@click="setTab('networkRolePage')"
-				:disabled="!networkRolePage"
-				:class="[networkRolePage && networkRoleDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+					@click="setTab('networkRolePage')"
+					:disabled="!networkRolePage"
+					:class="[networkRolePage && networkRoleDone ? 'main-progress-tab-done' : 'main-progress-tab']"
 			>
 				Network Role
 				<img v-if="networkRoleDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 			<div :class="[networkRoleDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
 			<CurvedButton
-				@click="setTab('participationKeyPage')"
-				:disabled="!participationKeyPage"
-				:class="[participationKeyPage && participationKeyDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+					@click="setTab('participationKeyPage')"
+					:disabled="!participationKeyPage"
+					:class="[participationKeyPage && participationKeyDone ? 'main-progress-tab-done' : 'main-progress-tab']"
 			>
 				Participation Key
 				<img v-if="participationKeyDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 		</div>
 		<section class="main-progress-content" v-if="currentTab === 'participantInfoPage'">
-			<CustomInput id="ParticipantID" placeholder="example.myID.com" v-model="participantID" />
+			<CustomInput id="ParticipantID" placeholder="example.myID.com" v-model="participantID"
+			             :get-value="getParticipantId" label-id="participantId" label-text="Please Enter Participant Id"
+			             type="text" />
 			<div class="main-progress-content-info">
 				<img src="@/assets/svgs/info.svg" alt="" />
-				<p>this will be the ID of the participant you want to create.</p>
+				<p>participant Id can be of your choices. This id will be your Subscriber Id too.</p>
 			</div>
 			<CurvedButton class="main-progress-content-margin" @click="newNetworkParticipant"> Save & Next</CurvedButton>
 		</section>
 		<section v-if="currentTab === 'networkRolePage'">
 			<Dropdown
-				:get-selected-element="getNetworkDomain"
-				:list-of-elements="ListOfNetworkDomains"
-				label-name=" Network Domain"
-				@click="getNetworkDomainList"
+					:get-selected-element="getNetworkDomain"
+					:list-of-elements="ListOfNetworkDomains"
+					label-name=" Network Domain"
+					@click="getNetworkDomainList"
 			></Dropdown>
 			<Dropdown
-				:get-selected-element="getNetworkRole"
-				:list-of-elements="ListOfNetworkRoles"
-				label-name="Role Type"
+					:get-selected-element="getNetworkRole"
+					:list-of-elements="ListOfNetworkRoles"
+					label-name="Role Type"
 			></Dropdown>
+			<CustomInput :get-value="getSubscriberId" label-id="subscriberID" label-text="Subscriber Id"
+			             :placeholder="subscriberId" type="text"></CustomInput>
+			<CustomInput type="url" label-text="Please Enter URL" label-id="url" :get-value="getUrl" placeholder="example.myUrl.com" />
 			<Dropdown
-				:get-selected-element="getRoleStatus"
-				:list-of-elements="ListOfRoleStatus"
-				label-name="Role Status"
+					:get-selected-element="getRoleStatus"
+					:list-of-elements="ListOfRoleStatus"
+					label-name="Role Status"
 			></Dropdown>
 			<CurvedButton @click="createNetworkRole(networkDomain)"> Save & Next</CurvedButton>
 		</section>
@@ -80,7 +85,7 @@ export default {
 		PostLoginHeader,
 		CustomInput,
 		CurvedButton,
-		Dropdown,
+		Dropdown
 	},
 	data() {
 		return {
@@ -103,109 +108,118 @@ export default {
 			ListOfRoleStatus: ["INITIATED", "SUBSCRIBED", "UNDER_SUBSCRIPTION", "UNSUBSCRIBED", "INVALID_SSL"],
 			url: null,
 			subscriberId: null,
-			networkRoleDetails: null,
+			networkRoleDetails: null
 		};
 	},
 
 	methods: {
-		getNetworkRole: function (element) {
+		getParticipantId(value) {
+			this.participantID = value;
+		},
+		getSubscriberId(value) {
+			this.subscriberId = value;
+		},
+		getUrl(value) {
+			this.url = value;
+		},
+		getNetworkRole: function(element) {
 			this.networkRole = element;
 		},
-		getNetworkDomain: function (element) {
+		getNetworkDomain: function(element) {
 			this.networkDomain = element;
 		},
-		getRoleStatus: function (element) {
+		getRoleStatus: function(element) {
 			this.roleStatus = element;
 		},
-		newNetworkParticipant: async function () {
+		newNetworkParticipant: async function() {
 			await axios
-				.post(api_map.newNetworkParticipant, {
-					participant_id: this.participantID,
-				})
-				.then((response) => {
-					// if response.status is 200 then route to the dashboard
-					if (response.status !== 200) {
-						console.log("Error: " + response.status);
-						return;
-					}
+					.post(api_map.newNetworkParticipant, {
+						participant_id: this.participantID
+					})
+					.then((response) => {
+						// if response.status is 200 then route to the dashboard
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
 
-					this.participantDetails = response.data["network_participants"][0];
-					this.participantInfoDone = true;
-					this.networkRolePage = true;
-					this.currentTab = "networkRolePage";
-					this.subscriberId = this.participantID;
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+						this.participantDetails = response.data["network_participants"][0];
+						this.participantInfoDone = true;
+						this.networkRolePage = true;
+						this.currentTab = "networkRolePage";
+						this.subscriberId = this.participantID;
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 		},
 
-		setTab: function (tab) {
+		setTab: function(tab) {
 			this.currentTab = tab;
 		},
-		getNetworkDomainList: async function () {
+		getNetworkDomainList: async function() {
 			axios
-				.get(api_map.networkDomainsList)
-				.then((response) => {
-					// if response.status is 200 then route to the dashboard
-					if (response.status !== 200) {
-						console.log("Error: " + response.status);
-						return;
-					}
+					.get(api_map.networkDomainsList)
+					.then((response) => {
+						// if response.status is 200 then route to the dashboard
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
 
-					const rawData = response.data["network_domains"];
-					if (rawData.length === 0) return;
+						const rawData = response.data["network_domains"];
+						if (rawData.length === 0) return;
 
-					this.ListOfNetworkDomains = [];
-					this.ListOfMapOfNetworkDomains = [];
+						this.ListOfNetworkDomains = [];
+						this.ListOfMapOfNetworkDomains = [];
 
-					for (let index in rawData) {
-						this.ListOfMapOfNetworkDomains.push({
-							domain: rawData[index]["name"],
-							network_domain_id: rawData[index]["id"],
-						});
-						this.ListOfNetworkDomains.push(rawData[index]["name"]);
-					}
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+						for (let index in rawData) {
+							this.ListOfMapOfNetworkDomains.push({
+								domain: rawData[index]["name"],
+								network_domain_id: rawData[index]["id"]
+							});
+							this.ListOfNetworkDomains.push(rawData[index]["name"]);
+						}
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 		},
-		setDomainID: function (domain) {
+		setDomainID: function(domain) {
 			for (let index in this.ListOfMapOfNetworkDomains) {
 				if (this.ListOfMapOfNetworkDomains[index]["domain"] === domain) {
 					this.domainID = this.ListOfMapOfNetworkDomains[index]["network_domain_id"];
 				}
 			}
 		},
-		createNetworkRole: async function (domain) {
+		createNetworkRole: async function(domain) {
 			this.setDomainID(domain);
 			await axios
-				.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.newNetworkRole, {
-					network_domain_id: this.domainID,
-					type: this.networkRole,
-					status: this.roleStatus,
-					subscriber_id: this.subscriberId,
-					url: this.url,
-					network_participant_id: this.participantDetails["id"],
-				})
-				.then((response) => {
-					if (response.status !== 200) {
-						console.log("Error: " + response.status);
-						return;
-					}
+					.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.newNetworkRole, {
+						network_domain_id: this.domainID,
+						type: this.networkRole,
+						status: this.roleStatus,
+						subscriber_id: this.subscriberId,
+						url: this.url,
+						network_participant_id: this.participantDetails["id"]
+					})
+					.then((response) => {
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
 
-					this.networkRoleDetails = response.data["network_roles"][0];
-					this.networkRoleDone = true;
-					this.participationKeyPage = true;
-					this.currentTab = "participationKeyPage";
-				})
-				.catch((error) => {
-					console.log(error);
-					console.log(error.response);
-				});
-		},
-	},
+						this.networkRoleDetails = response.data["network_roles"][0];
+						this.networkRoleDone = true;
+						this.participationKeyPage = true;
+						this.currentTab = "participationKeyPage";
+					})
+					.catch((error) => {
+						console.log(error);
+						console.log(error.response);
+					});
+		}
+	}
 };
 </script>
 
@@ -215,11 +229,9 @@ export default {
 	flex-direction: column;
 	margin: 4.2em auto 5em auto;
 	align-items: flex-start;
-	border: #df0000 solid 1px;
 	max-height: max-content;
 
 	&-progress {
-		border: black solid 1px;
 		height: 3em;
 		margin: 0 auto 6em auto;
 		//border: var(--red-color) solid 1px;

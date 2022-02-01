@@ -114,7 +114,6 @@ export default {
 			font-weight: 500;
 			font-size: 0.8125rem;
 			cursor: pointer;
-
 			&:hover {
 				background: var(--text-color);
 				color: var(--bg-color-light);
