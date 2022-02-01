@@ -28,48 +28,34 @@
 				<img v-if="participationKeyDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 		</div>
-		<div class="main-content">
-			<section v-if="currentTab === 'participantInfoPage'">
-				<Dropdown :element-of-list="ListOfRoleStatus"></Dropdown>
-				<label for="ParticipantID">Please Enter Participant ID</label>
-				<CustomInput id="ParticipantID" placeholder="example.myID.com" v-model="participantID" />
-				<CurvedButton @click="newNetworkParticipant"> Save & Next</CurvedButton>
-			</section>
-			<section v-if="currentTab === 'networkRolePage'">
-				<div>
-					<label for="networkDomain">Please Select Network Domain</label>
-					<select class="dropdown" id="networkDomain" v-model="networkDomain" @click="getNetworkDomainList">
-						<option
-							class="dropdown-options"
-							v-for="(domain, index) in ListOfNetworkDomains"
-							:key="index"
-							:value="domain"
-						>
-							{{ domain }}
-						</option>
-					</select>
-				</div>
-				<div>
-					<label for="networkRole">Please Select Network Role</label>
-					<select class="dropdown" id="networkRole" v-model="networkRole">
-						<option v-for="(role, index) in ListOfNetworkRoles" :key="index" :value="role">{{ role }}</option>
-					</select>
-				</div>
-				<div>
-					<label for="roleStatus">Please Select Status</label>
-					<select class="dropdown" id="roleStatus" v-model="roleStatus">
-						<option v-for="(roleStatus, index) in ListOfRoleStatus" :key="index" :value="roleStatus">
-							{{ roleStatus }}
-						</option>
-					</select>
-				</div>
-				<label for="subscriberId">Subscriber Id</label>
-				<CustomInput id="subscriberId" placeholder="example.myID.com" v-model="subscriberId" />
-				<label for="enterURL">Please Enter URL</label>
-				<CustomInput id="enterURL" placeholder="example.myID.com" v-model="url" />
-				<CurvedButton @click="createNetworkRole(networkDomain)"> Save & Next</CurvedButton>
-			</section>
-		</div>
+		<section class="main-progress-content" v-if="currentTab === 'participantInfoPage'">
+			<CustomInput id="ParticipantID" placeholder="example.myID.com" v-model="participantID" />
+			<div class="main-progress-content-info">
+				<img src="@/assets/svgs/info.svg" alt="" />
+				<p>this will be the ID of the participant you want to create.</p>
+			</div>
+			<CurvedButton class="main-progress-content-margin" @click="newNetworkParticipant"> Save & Next</CurvedButton>
+		</section>
+		<section v-if="currentTab === 'networkRolePage'">
+			<Dropdown
+				:get-selected-element="getNetworkDomain"
+				:list-of-elements="ListOfNetworkDomains"
+				label-name=" Network Domain"
+				@click="getNetworkDomainList"
+			></Dropdown>
+			<Dropdown
+				:get-selected-element="getNetworkRole"
+				:list-of-elements="ListOfNetworkRoles"
+				label-name="Role Type"
+			></Dropdown>
+			<Dropdown
+				:get-selected-element="getRoleStatus"
+				:list-of-elements="ListOfRoleStatus"
+				label-name="Role Status"
+			></Dropdown>
+			<CurvedButton @click="createNetworkRole(networkDomain)"> Save & Next</CurvedButton>
+		</section>
+
 		<section class="main-key" v-if="currentTab === 'participationKeyPage'">
 			<p>To generate <strong>Participant Key</strong> click below button</p>
 			<CurvedButton>
@@ -122,6 +108,15 @@ export default {
 	},
 
 	methods: {
+		getNetworkRole: function (element) {
+			this.networkRole = element;
+		},
+		getNetworkDomain: function (element) {
+			this.networkDomain = element;
+		},
+		getRoleStatus: function (element) {
+			this.roleStatus = element;
+		},
 		newNetworkParticipant: async function () {
 			await axios
 				.post(api_map.newNetworkParticipant, {
@@ -185,8 +180,6 @@ export default {
 		},
 		createNetworkRole: async function (domain) {
 			this.setDomainID(domain);
-			console.log(this.participantDetails);
-			console.log(this.participantDetails["id"]);
 			await axios
 				.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.newNetworkRole, {
 					network_domain_id: this.domainID,
@@ -217,25 +210,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.custom-dropdown {
-	display: flex;
-	width: 21em;
-	height: 4em;
-	border: none;
-	border-radius: var(--box-radius--normal);
-	flex-direction: row;
-	align-items: flex-start;
-	justify-content: space-between;
-	background: var(--white-color);
-	font-family: "Montserrat", sans-serif;
-	font-size: 0.812rem;
-}
 .main {
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	margin: 4.2em auto 5em auto;
 	align-items: flex-start;
+	border: #df0000 solid 1px;
+	max-height: max-content;
 
 	&-progress {
+		border: black solid 1px;
 		height: 3em;
 		margin: 0 auto 6em auto;
 		//border: var(--red-color) solid 1px;
@@ -272,25 +256,37 @@ export default {
 				transition: all 0.5s ease-in-out;
 			}
 		}
-	}
 
-	&-content {
-		display: flex;
-		width: 23em;
-		height: 23em;
-		flex-direction: column;
-	}
+		&-content {
+			display: grid;
+			grid-gap: 1em;
 
-	&-key {
-		display: flex;
-		width: max-content;
-		flex-direction: column;
-		margin: auto;
-		align-items: center;
-		position: relative;
-		z-index: 100;
-		bottom: 20em;
-		float: top;
+			&-margin {
+				margin: 0 auto;
+			}
+
+			&-info {
+				display: grid;
+				grid-auto-flow: column;
+				width: 23rem;
+				grid-gap: 1.25em;
+				align-items: center;
+				font-size: 0.5rem;
+				color: var(--info-text-color);
+			}
+		}
+
+		&-key {
+			display: flex;
+			width: max-content;
+			flex-direction: column;
+			margin: auto;
+			align-items: center;
+			position: relative;
+			z-index: 100;
+			bottom: 20em;
+			float: top;
+		}
 	}
 }
 </style>

@@ -1,13 +1,16 @@
 <template>
-	<div @click="toggle" class="dropdown" v-on:clickaway="hideDropdown">
-		<div class="dropdown-box">
+	<div @click="toggle" class="dropdown" v-on:clickaway="hideDropdown" v-on:click="getSelectedElement(selectedElement)">
+		<label for="label"
+			><strong>{{ labelName }}</strong>
+		</label>
+		<div id="label" class="dropdown-box">
 			{{ selectedElement }}
 			<img :class="[active ? 'dropdown-box-img' : '']" src="@/assets/svgs/dropdown.svg" alt="custom-dropdown icon" />
 		</div>
 		<div v-if="active" class="dropdown-list">
 			<div
 				class="dropdown-list-element"
-				v-for="(element, index) in elementOfList"
+				v-for="(element, index) in listOfElements"
 				:key="index"
 				@click="setSelectedElement(element)"
 			>
@@ -20,22 +23,22 @@
 <script>
 export default {
 	name: "Dropdown",
-	provide() {
-		return {
-			sharedState: this.sharedState,
-		};
-	},
 	props: {
-		elementOfList: {
+		listOfElements: {
 			type: Array,
+			required: true,
+		},
+		getSelectedElement: {
+			type: Function,
+			required: true,
+		},
+		labelName: {
+			type: String,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			sharedState: {
-				selected: this.selectedElement,
-			},
 			selectedElement: null,
 			active: false,
 		};
@@ -60,9 +63,19 @@ export default {
 	flex-direction: column;
 	font-family: "Montserrat", sans-serif;
 	gap: 0.8em;
+	min-width: 10em;
+	max-width: max-content;
+
+	label {
+		font-size: 0.9em;
+		font-weight: 500;
+		color: var(--text-color);
+		cursor: pointer;
+	}
 
 	&-box {
 		display: flex;
+		gap: 1.25em;
 		flex-direction: row;
 		justify-content: space-between;
 		padding: 0 2.1em;
@@ -75,10 +88,12 @@ export default {
 		font-size: 0.9rem;
 		font-weight: 500;
 		box-shadow: var(--box-shadow);
+
 		img {
 			margin-left: auto;
 			transition: all 0.3s ease-in-out;
 		}
+
 		&-img {
 			transform: rotate(180deg);
 			transition: all 0.3s ease-in-out;
@@ -93,11 +108,13 @@ export default {
 		background: var(--bg-color-light);
 		box-shadow: var(--box-shadow);
 		border-radius: var(--box-radius--medium);
+
 		&-element {
 			padding: 1.25em 2.1em;
 			font-weight: 500;
 			font-size: 0.8125rem;
 			cursor: pointer;
+
 			&:hover {
 				background: var(--text-color);
 				color: var(--bg-color-light);
@@ -106,6 +123,7 @@ export default {
 					border-top-left-radius: var(--box-radius--medium);
 					border-top-right-radius: var(--box-radius--medium);
 				}
+
 				// apply radius to the bottom right and bottom left corner for last element
 				&:last-child {
 					border-bottom-left-radius: var(--box-radius--medium);

@@ -1,6 +1,8 @@
 <!-- CustomInput.vue -->
 <template>
-	<input class="field-design input-label" type="text" :value="modelValue" @input="updateModelValue" />
+	<div class="custom-input">
+		<input class="custom-input-design input-label" type="text" :value="modelValue" @input="updateModelValue" />
+	</div>
 </template>
 
 <script>
@@ -25,15 +27,24 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.field-design {
-	border: none;
-	border-radius: var(--box-radius--normal);
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	padding: 0 1.5em;
-}
-.input-label {
-	margin-bottom: 2.2em;
+.custom-input {
+	display: grid;
+	gap: 0.8em;
+
+	label {
+		font-size: 0.9em;
+		font-weight: 500;
+		color: var(--text-color);
+		cursor: pointer;
+	}
+
+	&-design {
+		border: none;
+		border-radius: var(--box-radius--normal);
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		padding: 0 1.5em;
+	}
 }
 </style>
