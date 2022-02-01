@@ -57,7 +57,7 @@ export default {
 		},
 		async login() {
 			await axios
-				.post("https://beckn-one.succinct.in/" + api_map.login, {
+				.post("https://beckn-one.succinct.in" + api_map.login, {
 					User: {
 						Name: this.Name,
 						Password: this.Password,
