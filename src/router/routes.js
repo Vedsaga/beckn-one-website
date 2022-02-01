@@ -2,6 +2,7 @@ import Home from "@/views/Home";
 import LoginPage from "@/views/LoginPage";
 import Dashboard from "@/views/Dashboard";
 import CreateParticipant from "@/views/CreateParticipant";
+import _404 from "@/views/404";
 
 export default [
     {
@@ -40,5 +41,11 @@ export default [
             title: "Create Participant",
             requiresAuth: true,
         },
+    },
+
+    {
+        path: "/:catchAll(.*)",
+        name: "NotFound",
+        component: _404,
     },
 ];
