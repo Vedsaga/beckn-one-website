@@ -22,7 +22,7 @@
 							{{ participant["participant_name"] }}
 						</span>
 					</div>
-					<button v-if="showRemoveIcon" id="cross" @click="removeParticipant(participant.participant_id)">
+					<button :class="{'cross-show': showRemoveIcon}" class="cross" @click="removeParticipant(participant.participant_id)">
 						<img alt="create icon" src="@/assets/svgs/cross.svg" />
 					</button>
 				</div>
@@ -81,23 +81,24 @@ export default {
 		},
 
 		getParticipantList: async function () {
-			try {
-				const response = await axios.get(api_map.networkParticipantsList);
-				if (response.status === 200) {
+			await axios
+				.get(api_map.networkParticipantsList)
+				.then((response) => {
+					if (response.status !== 200) return;
+
 					const rawData = response.data["network_participants"];
-					if (rawData.length !== 0) {
-						//	for loop over rawData and extract participant_id
-						for (let index in rawData) {
-							this.participantList.push({
-								participant_id: rawData[index]["id"],
-								participant_name: rawData[index]["participant_id"],
-							});
-						}
+					if (rawData.length === 0) return;
+
+					for (let index in rawData) {
+						this.participantList.push({
+							participant_id: rawData[index]["id"],
+							participant_name: rawData[index]["participant_id"],
+						});
 					}
-				}
-			} catch (e) {
-				console.log(e);
-			}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
 		},
 	},
 };
@@ -109,7 +110,8 @@ export default {
 
 	&-grid {
 		display: flex;
-		gap: 5em;
+		justify-content: space-between;
+		gap: 1em;
 
 		&-buttons {
 			height: 14.625em;
@@ -118,7 +120,10 @@ export default {
 		}
 
 		&-info {
-			display: grid;
+			display: flex;
+			flex-flow: row wrap;
+			width: 100%;
+			gap: 3rem;
 
 			&-content {
 				color: var(--text-color);
@@ -127,7 +132,6 @@ export default {
 				padding: 1.8em 2.8em;
 				width: 13rem;
 				height: 1.8rem;
-				position: relative;
 				overflow: hidden;
 				text-overflow: ellipsis;
 
@@ -142,20 +146,19 @@ export default {
 			&-button {
 				position: relative;
 				display: inline;
-				margin: 1em 0;
+				margin: 1rem;
 				transition: all 0.3s ease-in-out;
 				border-radius: 21px;
 
 				&:hover {
 					transform: scale(1.1);
-					background: transparent;
-					transition: all 0.3s ease-in-out;
+					background: var(--bg-color-light);
 				}
 			}
 		}
 	}
 
-	#cross {
+	.cross {
 		height: 2em;
 		width: 2em;
 		background-color: var(--red-color);
@@ -163,10 +166,17 @@ export default {
 		align-items: center;
 		border: none;
 		outline: none;
-		top: -7em;
-		right: -21em;
-		position: relative;
+		top: -1em;
+		right: -1em;
+		position: absolute;
 		display: inline-block;
+		transform: scale(0) rotate(-90deg);
+
+		transition: all 0.3s ease-in-out;
+
+		&-show {
+			transform: scale(1) rotate(0);
+		}
 
 		& > img {
 			position: static;
