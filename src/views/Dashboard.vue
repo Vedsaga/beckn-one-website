@@ -22,7 +22,11 @@
 							{{ participant["participant_name"] }}
 						</span>
 					</div>
-					<button :class="{'cross-show': showRemoveIcon}" class="cross" @click="removeParticipant(participant.participant_id)">
+					<button
+						:class="{ 'cross-show': showRemoveIcon }"
+						class="cross"
+						@click="removeParticipant(participant.participant_id)"
+					>
 						<img alt="create icon" src="@/assets/svgs/cross.svg" />
 					</button>
 				</div>

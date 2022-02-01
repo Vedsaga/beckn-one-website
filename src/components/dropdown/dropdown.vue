@@ -1,13 +1,18 @@
 <template>
 	<div @click="toggle" class="dropdown" v-on:clickaway="hideDropdown">
-		<div class="dropdown-box" >
+		<div class="dropdown-box">
 			{{ selectedElement }}
-			<img :class="[active ? 'dropdown-box-img' : '' ]" src="@/assets/svgs/dropdown.svg" alt="custom-dropdown icon">
+			<img :class="[active ? 'dropdown-box-img' : '']" src="@/assets/svgs/dropdown.svg" alt="custom-dropdown icon" />
 		</div>
 		<div v-if="active" class="dropdown-list">
-				<div class="dropdown-list-element" v-for="(element, index) in elementOfList" :key="index" @click="setSelectedElement(element)">
-					{{ element }}
-				</div>
+			<div
+				class="dropdown-list-element"
+				v-for="(element, index) in elementOfList"
+				:key="index"
+				@click="setSelectedElement(element)"
+			>
+				{{ element }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -17,22 +22,22 @@ export default {
 	name: "Dropdown",
 	provide() {
 		return {
-			sharedState: this.sharedState
+			sharedState: this.sharedState,
 		};
 	},
 	props: {
 		elementOfList: {
 			type: Array,
-			required: true
+			required: true,
 		},
 	},
 	data() {
 		return {
 			sharedState: {
-				selected: this.selectedElement
+				selected: this.selectedElement,
 			},
 			selectedElement: null,
-			active: false
+			active: false,
 		};
 	},
 	methods: {
@@ -42,27 +47,27 @@ export default {
 		setSelectedElement(element) {
 			this.selectedElement = element;
 		},
-		hideDropdown () {
-			this.active = false
-		}
-	}
-}
+		hideDropdown() {
+			this.active = false;
+		},
+	},
+};
 </script>
 
 <style lang="scss" scoped>
-.dropdown{
-	display:flex;
+.dropdown {
+	display: flex;
 	flex-direction: column;
 	font-family: "Montserrat", sans-serif;
 	gap: 0.8em;
 
-	&-box{
-		display:flex;
-		flex-direction:row;
+	&-box {
+		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
 		padding: 0 2.1em;
 		height: 3.3em;
-	  cursor: pointer;
+		cursor: pointer;
 		background: var(--bg-color-light);
 		border-radius: var(--box-radius--normal);
 		align-items: center;
@@ -73,13 +78,14 @@ export default {
 		img {
 			margin-left: auto;
 			transition: all 0.3s ease-in-out;
-		}&-img {
+		}
+		&-img {
 			transform: rotate(180deg);
 			transition: all 0.3s ease-in-out;
 		}
 	}
 
-	&-list{
+	&-list {
 		display: grid;
 		max-width: max-content;
 		align-items: flex-start;
@@ -87,21 +93,21 @@ export default {
 		background: var(--bg-color-light);
 		box-shadow: var(--box-shadow);
 		border-radius: var(--box-radius--medium);
-		&-element{
+		&-element {
 			padding: 1.25em 2.1em;
 			font-weight: 500;
 			font-size: 0.8125rem;
 			cursor: pointer;
-			&:hover{
+			&:hover {
 				background: var(--text-color);
 				color: var(--bg-color-light);
-			//	apply radius to the top right and top left corner for first element
-				&:first-child{
+				//	apply radius to the top right and top left corner for first element
+				&:first-child {
 					border-top-left-radius: var(--box-radius--medium);
 					border-top-right-radius: var(--box-radius--medium);
 				}
 				// apply radius to the bottom right and bottom left corner for last element
-				&:last-child{
+				&:last-child {
 					border-bottom-left-radius: var(--box-radius--medium);
 					border-bottom-right-radius: var(--box-radius--medium);
 				}
@@ -109,5 +115,4 @@ export default {
 		}
 	}
 }
-
 </style>

@@ -16,7 +16,9 @@
 			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
-        <a href="/oid/login?SELECTED_OPEN_ID=GOOGLE&_redirect_to=ui/dist/dashboard" ><img src="/images/google-icon.svg"/></a>
+		<a href="/oid/login?SELECTED_OPEN_ID=GOOGLE&_redirect_to=ui/dist/dashboard"
+			><img src="/images/google-icon.svg"
+		/></a>
 	</div>
 </template>
 
