@@ -1,7 +1,7 @@
 const apiDict = {
     login: "/login",
     logout: "/logout",
-    networkParticipantsList: "/network_participants",
+    networkParticipantsList: "/ /network_participants/search?q=CREATOR_USER_ID:",
     singleNetworkParticipant: "/network_participants/show/",
     removeNetworkParticipant: "/network_participants/destroy/",
     newNetworkParticipant: "/network_participants/save",

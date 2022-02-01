@@ -1,5 +1,5 @@
 <template>
-	<div class="modal-wrapper" :class="{ show: true }">
+	<div class="modal-wrapper" :class="{ show: false }">
 		<div class="modal">
 			<h1>Want to Delete?</h1>
 			<p>Are you sure you want to delete?</p>
@@ -98,7 +98,7 @@ export default {
 
 		getParticipantList: async function () {
 			await axios
-				.get(api_map.networkParticipantsList)
+				.get(api_map.networkParticipantsList + this.id)
 				.then((response) => {
 					if (response.status !== 200) return;
 

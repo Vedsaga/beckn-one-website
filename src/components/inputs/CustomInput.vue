@@ -1,28 +1,42 @@
 <!-- CustomInput.vue -->
 <template>
 	<div class="custom-input">
-		<input class="custom-input-design input-label" type="text" :value="modelValue" @input="updateModelValue" />
+		<input
+				class="custom-input-design input-label"
+				type="text"
+				:placeholder="placeholder"
+				:value="value"
+				@input ="setValue($event.target.value)"
+				@change="sendValue(value)"
+		/>
 	</div>
 </template>
-
 <script>
+
 export default {
 	name: "CustomInput",
 	props: {
-		modelValue: {
-			type: String,
-			default: null,
-		},
 		placeholder: {
 			type: String,
 			required: true,
 		},
+
+		sendValue: {
+			type: Function,
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			value: null,
+		};
 	},
 
 	methods: {
-		updateModelValue() {
-			this.$emit("update:modelValue", this.$el.value);
-		},
+		setValue(value) {
+			this.value = value;
+		}
 	},
 };
 </script>

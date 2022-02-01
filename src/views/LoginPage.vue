@@ -8,17 +8,18 @@
 		<div class="form-body">
 			<div class="form-group">
 				<label for="username">username</label>
-				<CustomInput id="username" v-model="Name" placeholder="username" />
+				<CustomInput id="username" v-model="Name" placeholder="username"  :send-value="getUsername"/>
 			</div>
 			<div class="form-group">
 				<label for="password">password</label>
-				<CustomInput id="password" v-model="Password" placeholder="password" type="password" />
+				<CustomInput id="password" v-model="Password" placeholder="password" type="password"  :send-value="getPassword"/>
 			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
-		<a href="/oid/login?SELECTED_OPEN_ID=GOOGLE&_redirect_to=ui/dist/dashboard"
-			><img src="/images/google-icon.svg"
-		/></a>
+		<CurvedButton id="googleLogin">
+			<a href="/oid/login?SELECTED_OPEN_ID=GOOGLE&_redirect_to=ui/dist/dashboard">
+				<img src="@/assets/svgs/google.svg" alt="google"/></a>
+		</CurvedButton>
 	</div>
 </template>
 
@@ -30,10 +31,12 @@ import axios from "axios";
 
 import RoundedButton from "@/components/buttons/RoundedButton";
 import CustomInput from "@/components/inputs/CustomInput";
+import CurvedButton from "@/components/buttons/CurvedButton";
 
 export default {
 	name: "LoginPage",
 	components: {
+		CurvedButton,
 		CustomInput,
 		RoundedButton,
 		HeaderLogin,
@@ -46,6 +49,12 @@ export default {
 	},
 	methods: {
 		...mapActions(["setToken", "setName", "setId", "setError", "setState"]),
+		getUsername(value){
+			this.Name = value;
+		},
+		getPassword(value){
+			this.Password = value;
+		},
 		async login() {
 			await axios
 				.post("https://beckn-one.succinct.in/" + api_map.login, {
@@ -77,6 +86,11 @@ export default {
 </script>
 
 <style lang="scss">
+
+#googleLogin{
+	background: var(--bg-color);
+	box-shadow: var(--box-shadow);}
+
 .form {
 	display: grid;
 	place-items: center;
