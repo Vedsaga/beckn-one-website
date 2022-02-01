@@ -1,4 +1,16 @@
 <template>
+	<div class="modal-wrapper" :class="{ show: true }">
+		<div class="modal">
+			<h1>Want to Delete?</h1>
+			<p>Are you sure you want to delete?</p>
+
+			<div class="modal-buttons">
+				<a id="cancel">cancel</a>
+				<a id="delete">yes</a>
+			</div>
+		</div>
+	</div>
+
 	<PostLoginHeader class="fix" />
 	<div class="main">
 		<h2>Your participation information</h2>
@@ -109,6 +121,72 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.modal-wrapper {
+	display: none;
+	place-items: center;
+	background-color: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+}
+
+.show {
+	display: grid;
+}
+
+.modal {
+	margin: 0.8em;
+	display: grid;
+	place-items: center;
+	background-color: #fff;
+	border-radius: 1.5em;
+	padding: 2em;
+
+	h1 {
+		width: 100%;
+		font-family: Montserrat, serif;
+		font-style: normal;
+		font-weight: bold;
+		font-size: 1.3em;
+		line-height: 1.1em;
+		margin-bottom: 0;
+	}
+
+	p {
+		margin-bottom: 2em;
+	}
+
+	&-buttons {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 2em;
+	}
+}
+
+#cancel {
+	font-family: inherit;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 1em;
+	line-height: 1.2em;
+	color: #02a786;
+}
+
+#delete {
+	font-family: inherit;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 1em;
+	line-height: 1.2em;
+	color: #ffffff;
+
+	background: linear-gradient(90deg, #b00000 0%, #f90000 98.26%, #df0000 98.27%);
+	border-radius: 0.5em;
+	padding: 0.5em 1.5em;
+}
+
 .main {
 	margin-top: 3rem;
 
@@ -175,8 +253,11 @@ export default {
 		position: absolute;
 		display: inline-block;
 		transform: scale(0) rotate(-90deg);
-
 		transition: all 0.3s ease-in-out;
+
+		&:hover {
+			transform: scale(1.2);
+		}
 
 		&-show {
 			transform: scale(1) rotate(0);
