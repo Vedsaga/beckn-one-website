@@ -30,8 +30,8 @@ export default {
 	width: 20em;
 	height: 3.3em;
 	border-radius: 0.75em;
-	background-color: var(--info-text-color);
-	color: var(--white-color);
+	background-color: var(--gray-complement);
+	color: var(--info-text);
 	cursor: pointer;
 	transition: all 0.3s ease-in-out;
 	text-decoration: none;
@@ -44,13 +44,15 @@ export default {
 	border: none;
 
 	&:hover {
-		color: #fff;
-		background-color: var(--blue-color);
-		box-shadow: var(--box-shadow-hover);
+		color: var(--white-bg);
+		background-color: var(--light-blue);
+		box-shadow: var(--dark-shadow);
+		transition: all 0.3s ease-in-out;
 	}
 
 	&:active {
 		transform: scale(0.95);
+		transition: all 0.3s ease-in-out;
 	}
 
 	&:focus {

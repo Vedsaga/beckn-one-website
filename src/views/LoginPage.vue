@@ -85,24 +85,23 @@ export default {
 <style lang="scss">
 
 #googleLogin{
-	background: var(--bg-color);
-	box-shadow: var(--box-shadow);}
+	background: var(--white-bg-header);
+	box-shadow: var(--light-shadow);
+}
 
 .form {
 	display: grid;
 	place-items: center;
-	grid-gap: 1em;
+	grid-gap: var(--medium-gap);
 
 	&-head {
 		h1 {
 			font-size: 2em;
 			font-weight: bold;
-			margin: 0 auto;
 			color: var(--text-color);
 		}
 
 		p {
-			margin: 0 auto;
 			color: var(--text-color);
 			font-size: 1.5em;
 		}
@@ -110,7 +109,7 @@ export default {
 
 	&-body {
 		display: grid;
-		grid-gap: 1em;
+		grid-gap: var(--large-gap);
 	}
 
 	&-group {

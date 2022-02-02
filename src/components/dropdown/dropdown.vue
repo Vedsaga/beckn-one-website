@@ -65,6 +65,7 @@ export default {
 	gap: 0.8em;
 	min-width: 10em;
 	max-width: max-content;
+	position: relative;
 
 	label {
 		font-size: 0.9em;
@@ -81,13 +82,15 @@ export default {
 		padding: 0 2.1em;
 		height: 3.3em;
 		cursor: pointer;
-		background: var(--bg-color-light);
-		border-radius: var(--box-radius--normal);
+		background: var(--white-bg);
+		border-radius: var(--medium-border-radius);
 		align-items: center;
 		align-content: flex-end;
 		font-size: 0.9rem;
 		font-weight: 500;
-		box-shadow: var(--box-shadow);
+		box-shadow: var(--dark-shadow);
+		transition: all 0.2s ease-in-out;
+		position: relative;
 
 		img {
 			margin-left: auto;
@@ -104,10 +107,13 @@ export default {
 		display: grid;
 		max-width: max-content;
 		align-items: flex-start;
-		margin-left: auto;
-		background: var(--bg-color-light);
-		box-shadow: var(--box-shadow);
-		border-radius: var(--box-radius--medium);
+		background: var(--white-bg);
+		box-shadow: var(--light-shadow);
+		border-radius: var(--small-border-radius);
+		position: absolute;
+		top: 5.5em;
+		transition: all 0.2s ease-in-out;
+		z-index: 5;
 
 		&-element {
 			padding: 1.25em 2.1em;
@@ -116,17 +122,17 @@ export default {
 			cursor: pointer;
 			&:hover {
 				background: var(--text-color);
-				color: var(--bg-color-light);
+				color: var(--white-bg);
 				//	apply radius to the top right and top left corner for first element
 				&:first-child {
-					border-top-left-radius: var(--box-radius--medium);
-					border-top-right-radius: var(--box-radius--medium);
+					border-top-left-radius: var(--small-border-radius);
+					border-top-right-radius: var(--small-border-radius);
 				}
 
 				// apply radius to the bottom right and bottom left corner for last element
 				&:last-child {
-					border-bottom-left-radius: var(--box-radius--medium);
-					border-bottom-right-radius: var(--box-radius--medium);
+					border-bottom-left-radius: var(--small-border-radius);
+					border-bottom-right-radius: var(--small-border-radius);
 				}
 			}
 		}

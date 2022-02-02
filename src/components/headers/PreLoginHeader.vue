@@ -3,7 +3,7 @@
 		<nav class="header-nav">
 			<ul>
 				<li>
-					<a id="logo" class="header-link" href="#"> becknONE </a>
+					<router-link id="logo" class="header-link" to="/"> becknONE </router-link>
 				</li>
 				<li>
 					<a class="header-link lighter" href="#"> Getting Started </a>
@@ -42,16 +42,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .header {
 	display: flex;
-	align-items: center;
 	justify-content: space-between;
-	height: 110px;
-	gap: 1em;
-
-	font-weight: 600;
-	font-size: 15px;
-	line-height: 18px;
+	align-items: center;
+	background: var(--white-bg-header);
 
 	&-nav {
 		width: 100%;
@@ -61,7 +57,7 @@ export default {
 			align-items: center;
 			padding-left: 0;
 			justify-content: space-between;
-			max-width: 540px;
+			max-width: 33.75em;
 
 			li {
 				list-style: none;
@@ -70,7 +66,7 @@ export default {
 					transition: all 0.3s ease;
 
 					&:hover {
-						color: #00a8ff;
+						color: var(--dark-blue);
 					}
 				}
 			}
@@ -83,11 +79,10 @@ export default {
 	}
 
 	&-right {
-		background: var(--text-color);
-		color: var(--bg-color);
-		box-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
-		border-radius: 2.1rem;
-		padding: 1rem 2rem;
+		background: var(--dark-bg-header);
+		color: var(--white-bg-header);
+		border-radius: var(--large-border-radius);
+		padding: var(--small-padding) var(--large-padding);
 		white-space: pre;
 	}
 }
@@ -97,10 +92,6 @@ export default {
 	line-height: 26px;
 	font-family: Righteous, cursive;
 	font-weight: 500;
-	background: linear-gradient(90deg, #000000 0%, #9e9e9e 48.44%, #dadada 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	padding-left: 0;
 }
 
 .lighter {
@@ -114,7 +105,7 @@ export default {
 		cursor: pointer;
 		display: flex;
 		align-items: center;
-		gap: 13px;
+		gap: var(--gap);
 	}
 
 	&-menu {
@@ -127,12 +118,11 @@ export default {
 		transform-origin: top;
 		transition: all 0.3s ease-in-out;
 		place-items: center;
-		padding: 20px;
-
+		padding: var(--medium-padding);
 		ul {
 			display: flex;
 			flex-direction: column;
-			gap: 10px;
+			gap: var(--small-gap);
 			padding-left: 0;
 
 			li {

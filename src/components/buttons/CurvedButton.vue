@@ -22,8 +22,8 @@ export default {
 
 	border-radius: 2.5em; /* how to set up border-radius equal to height of the button? */
 	background: var(--orange-gardient);
-	box-shadow: var(--box-shadow-hover);
-	color: var(--white-color);
+	box-shadow: var(--dark-shadow);
+	color: var(--white-bg);
 	cursor: pointer;
 	transition: all 0.3s ease-in-out;
 	text-align: center;
@@ -46,9 +46,8 @@ export default {
 
 	&:disabled {
 		cursor: not-allowed;
-		background: #9d9d9d;
+		background: var(--gray-complement);
 		opacity: 0.55;
-
 		&:hover {
 			transform: none;
 		}

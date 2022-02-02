@@ -155,7 +155,7 @@ export default {
 	margin: 0.8em;
 	display: grid;
 	place-items: center;
-	background-color: #fff;
+	background-color: var(--white-bg);
 	border-radius: 1.5em;
 	padding: 2em;
 
@@ -178,7 +178,7 @@ export default {
 		width: 100%;
 		align-items: center;
 		justify-content: flex-end;
-		gap: 2em;
+		gap: var(--medium-gap);
 	}
 }
 
@@ -188,7 +188,7 @@ export default {
 	font-weight: bold;
 	font-size: 1em;
 	line-height: 1.2em;
-	color: #02a786;
+	color: var(--dark-green);
 	border: none;
 	outline: none;
 	background: transparent;
@@ -200,7 +200,7 @@ export default {
 	font-weight: bold;
 	font-size: 1em;
 	line-height: 1.2em;
-	color: #ffffff;
+	color: var(--white-bg);
 	border: none;
 	outline: none;
 	background: linear-gradient(90deg, #b00000 0%, #f90000 98.26%, #df0000 98.27%);
@@ -229,9 +229,9 @@ export default {
 			gap: 3rem;
 
 			&-content {
-				color: var(--text-color);
-				box-shadow: var(--box-shadow);
-				border-radius: 21px;
+				color: var(--dark-bg-header);
+				box-shadow: var(--light-shadow);
+				border-radius: var(--border-radius);
 				padding: 1.8em 2.8em;
 				width: 13rem;
 				height: 1.8rem;
@@ -250,11 +250,12 @@ export default {
 				display: inline;
 				margin: 1rem;
 				transition: all 0.3s ease-in-out;
-				border-radius: 21px;
+				border-radius: var(--border-radius);
 
 				&:hover {
 					transform: scale(1.1);
-					background: var(--bg-color-light);
+					background: var(--gray-complement);
+					box-shadow: none !important;
 				}
 			}
 		}
@@ -263,7 +264,7 @@ export default {
 	.cross {
 		height: 2em;
 		width: 2em;
-		background-color: var(--red-color);
+		background-color: var(--dark-red);
 		border-radius: 50%;
 		align-items: center;
 		border: none;

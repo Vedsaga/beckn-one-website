@@ -28,36 +28,38 @@
 				<img v-if="participationKeyDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 		</div>
-		<section class="main-progress-content" v-if="currentTab === 'participantInfoPage'">
+		<section class="main-progress-participant" v-if="currentTab === 'participantInfoPage'">
 			<CustomInput id="ParticipantID" placeholder="example.myID.com" v-model="participantID"
 			             :get-value="getParticipantId" label-id="participantId" label-text="Please Enter Participant Id"
 			             type="text" />
-			<div class="main-progress-content-info">
+			<div class="main-progress-participant-info">
 				<img src="@/assets/svgs/info.svg" alt="" />
 				<p>participant Id can be of your choices. This id will be your Subscriber Id too.</p>
 			</div>
-			<CurvedButton class="main-progress-content-margin" @click="newNetworkParticipant"> Save & Next</CurvedButton>
+			<CurvedButton class="main-progress-participant-margin" @click="newNetworkParticipant"> Save & Next</CurvedButton>
 		</section>
-		<section v-if="currentTab === 'networkRolePage'">
-			<Dropdown
-					:get-selected-element="getNetworkDomain"
-					:list-of-elements="ListOfNetworkDomains"
-					label-name=" Network Domain"
-					@click="getNetworkDomainList"
-			></Dropdown>
-			<Dropdown
-					:get-selected-element="getNetworkRole"
-					:list-of-elements="ListOfNetworkRoles"
-					label-name="Role Type"
-			></Dropdown>
-			<CustomInput :get-value="getSubscriberId" label-id="subscriberID" label-text="Subscriber Id"
-			             :placeholder="subscriberId" type="text"></CustomInput>
-			<CustomInput type="url" label-text="Please Enter URL" label-id="url" :get-value="getUrl" placeholder="example.myUrl.com" />
-			<Dropdown
-					:get-selected-element="getRoleStatus"
-					:list-of-elements="ListOfRoleStatus"
-					label-name="Role Status"
-			></Dropdown>
+		<section class="main-progress-role" v-if="currentTab === 'networkRolePage'">
+			<div class="main-progress-role-input">
+				<Dropdown
+						:get-selected-element="getNetworkDomain"
+						:list-of-elements="ListOfNetworkDomains"
+						label-name=" Network Domain"
+						@click="getNetworkDomainList"
+				></Dropdown>
+				<Dropdown
+						:get-selected-element="getNetworkRole"
+						:list-of-elements="ListOfNetworkRoles"
+						label-name="Role Type"
+				></Dropdown>
+				<CustomInput :get-value="getSubscriberId" label-id="subscriberID" label-text="Subscriber Id"
+				             :placeholder="subscriberId" type="text"></CustomInput>
+				<CustomInput type="url" label-text="Please Enter URL" label-id="url" :get-value="getUrl" placeholder="example.myUrl.com" />
+				<Dropdown
+						:get-selected-element="getRoleStatus"
+						:list-of-elements="ListOfRoleStatus"
+						label-name="Role Status"
+				></Dropdown>
+			</div>
 			<CurvedButton @click="createNetworkRole(networkDomain)"> Save & Next</CurvedButton>
 		</section>
 
@@ -228,7 +230,6 @@ export default {
 	display: flex;
 	flex-direction: column;
 	margin: 4.2em auto 5em auto;
-	align-items: flex-start;
 	max-height: max-content;
 
 	&-progress {
@@ -243,14 +244,15 @@ export default {
 
 		&-tab {
 			display: flex;
-			background: var(--black-color);
+			background: var(--dark-bg-header);
 			box-shadow: none;
 			gap: 0.8rem;
 			transition: all 0.5s ease-in-out;
+			color: var(--info-text);
 
 			&-done {
 				display: flex;
-				background: var(--green-color);
+				background: var(--light-green);
 				box-shadow: none;
 				gap: 0.8rem;
 				transition: all 0.5s ease-in-out;
@@ -258,20 +260,21 @@ export default {
 		}
 
 		&-line {
-			border: 2px dashed #9d9d9d;
+			border: 2px dashed var(--gray-complement);
 			width: 14.5em;
 			transition: all 0.5s ease-in-out;
 
 			&-done {
 				width: 14.5em;
-				border: 2px dashed var(--green-color);
+				border: 2px dashed var(--light-green);
 				transition: all 0.5s ease-in-out;
 			}
 		}
 
-		&-content {
+		&-participant {
 			display: grid;
 			grid-gap: 1em;
+			margin-right: auto;
 
 			&-margin {
 				margin: 0 auto;
@@ -284,9 +287,25 @@ export default {
 				grid-gap: 1.25em;
 				align-items: center;
 				font-size: 0.5rem;
-				color: var(--info-text-color);
+				color: var(--info-text);
 			}
 		}
+
+		&-role {
+			display: grid;
+			height: max-content;
+			gap: 5em;
+			grid-template-rows: repeat(2, 1fr);
+			position: relative;
+
+			&-input {
+				display: grid;
+				grid-template-columns: repeat( 3, 1fr);
+				gap: 3rem;
+				flex-flow: row wrap;
+			}
+		}
+
 
 		&-key {
 			display: flex;
@@ -301,4 +320,5 @@ export default {
 		}
 	}
 }
+
 </style>
