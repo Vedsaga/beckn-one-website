@@ -1,20 +1,18 @@
 <!-- CustomInput.vue -->
 <template>
 	<div class="custom-input">
-		<label for="{{labelId}}">{{labelText}}</label>
+		<label :for="labelId">{{ labelText }}</label>
 		<input
-				id="{{labelId}}"
-				class="custom-input-design input-label"
-				:placeholder="placeholder"
-				:value="value"
-				@input ="setValue($event.target.value)"
-				@change="getValue(value)"
-				type="{{type}}"
+			:id="labelId"
+			class="custom-input-design input-label"
+			:placeholder="placeholder"
+			:value="modelValue"
+			@input="updateValue($event.target.value)"
+			:type="type"
 		/>
 	</div>
 </template>
 <script>
-
 export default {
 	name: "CustomInput",
 	props: {
@@ -22,12 +20,9 @@ export default {
 			type: String,
 			required: true,
 		},
-
-		getValue: {
-			type: Function,
-			required: true,
+		modelValue: {
+			type: String,
 		},
-
 		labelId: {
 			type: String,
 			required: true,
@@ -40,19 +35,11 @@ export default {
 			type: String,
 			required: true,
 		},
-
 	},
-
-	data() {
-		return {
-			value: null,
-		};
-	},
-
 	methods: {
-		setValue(value) {
-			this.value = value;
-		}
+		updateValue: function (value) {
+			this.$emit("update:modelValue", value);
+		},
 	},
 };
 </script>

@@ -1,17 +1,11 @@
 <template>
-	<div class="modal-wrapper" :class="{show}">
+	<div class="modal-wrapper" :class="{ show }">
 		<div class="modal">
 			<h1>Want to Delete?</h1>
 			<p>Are you sure you want to delete?</p>
 			<div class="modal-buttons">
-				<button
-						id="cancel"
-						@click="changeShow"
-				>cancel</button>
-				<button
-						id="delete"
-						@click="removeParticipant(removeParticipantId)"
-				>yes</button>
+				<button id="cancel" @click="changeShow">cancel</button>
+				<button id="delete" @click="removeParticipant(removeParticipantId)">yes</button>
 			</div>
 		</div>
 	</div>
@@ -39,9 +33,9 @@
 							{{ participant["participant_name"] }}
 						</span>
 						<button
-								:class="{ 'cross-show': showRemoveIcon }"
-								class="cross"
-								@click="changeShow(participant.participant_id)"
+							:class="{ 'cross-show': showRemoveIcon }"
+							class="cross"
+							@click="changeShow(participant.participant_id)"
 						>
 							<img alt="create icon" src="@/assets/svgs/cross.svg" />
 						</button>
@@ -72,7 +66,6 @@ export default {
 			participantList: [],
 			removeParticipantId: null,
 			show: false,
-
 		};
 	},
 

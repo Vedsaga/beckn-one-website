@@ -7,16 +7,31 @@
 		</div>
 		<div class="form-body">
 			<div class="form-group">
-				<CustomInput id="username" v-model="Name" placeholder="username"  :get-value="getUsername" label-id="username" label-text="username" type="username"/>
+				<CustomInput
+					id="username"
+					v-model="Name"
+					placeholder="username"
+					label-id="username"
+					label-text="username"
+					type="username"
+				/>
 			</div>
 			<div class="form-group">
-				<CustomInput id="password" v-model="Password" placeholder="password" type="password"  :get-value="getPassword" label-id="password" label-text="password" />
+				<CustomInput
+					id="password"
+					v-model="Password"
+					placeholder="password"
+					type="password"
+					label-id="password"
+					label-text="password"
+				/>
 			</div>
 		</div>
 		<RoundedButton class="center" @submit.prevent="login" @click="login"> Log in</RoundedButton>
 		<CurvedButton id="googleLogin">
 			<a href="/oid/login?SELECTED_OPEN_ID=GOOGLE&_redirect_to=ui/dist/dashboard">
-				<img src="@/assets/svgs/google.svg" alt="google"/></a>
+				<img src="@/assets/svgs/google.svg" alt="google"
+			/></a>
 		</CurvedButton>
 	</div>
 </template>
@@ -47,12 +62,6 @@ export default {
 	},
 	methods: {
 		...mapActions(["setToken", "setName", "setId", "setError", "setState"]),
-		getUsername(value){
-			this.Name = value;
-		},
-		getPassword(value){
-			this.Password = value;
-		},
 		async login() {
 			await axios
 				.post("https://beckn-one.succinct.in/" + api_map.login, {
@@ -83,8 +92,7 @@ export default {
 </script>
 
 <style lang="scss">
-
-#googleLogin{
+#googleLogin {
 	background: var(--white-bg-header);
 	box-shadow: var(--light-shadow);
 }

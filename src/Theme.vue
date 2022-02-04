@@ -19,11 +19,13 @@
 	--info-text: #9d9d9d;
 	--gray-complement: #e5e5e5;
 	--dark-green: #4caf50;
-	--light-green:#2ae2bd;
+	--light-green: #2ae2bd;
 	--dark-red: #e50000;
 	--light-red: #e63946;
 	--dark-blue: #00a0ff;
 	--light-blue: #32c3ff;
+	--dark-yellow: #ffd600;
+	--light-yellow: #ffecb3;
 	--orange-gardient: linear-gradient(90deg, #f15a24 0%, #f68f1f 98.29%, #f68f1f 98.29%);
 	--dark-shadow: -5px 5px 34px rgba(0, 0, 0, 0.13);
 	--light-shadow: -5px 5px 34px rgba(0, 0, 0, 0.08);
@@ -31,13 +33,14 @@
 	--medium-border-radius: 0.812rem; // ~13px
 	--border-radius: 1.312rem; // ~21px
 	--large-border-radius: 2.125rem; // ~34px
-	--small-padding:0.812rem; // ~13px
-	--medium-padding:1.312rem; // ~21px
-	--large-padding:2.125rem; // ~34px
-	--small-gap:0.5rem; // ~8px
-	--gap:0.812rem; // ~13px
-	--medium-gap:1.312rem; // ~21px
-	--large-gap:2.125rem; // ~34px
+	--small-padding: 0.812rem; // ~13px
+	--medium-padding: 1.312rem; // ~21px
+	--large-padding: 2.125rem; // ~34px
+	--big-padding: 3.43rem; // ~55px
+	--small-gap: 0.5rem; // ~8px
+	--gap: 0.812rem; // ~13px
+	--medium-gap: 1.312rem; // ~21px
+	--large-gap: 2.125rem; // ~34px
 	--left-right-center: 0 auto;
 	--top-bottom-center: auto 0;
 	--input-width: min(100%, calc(100% - 2.5rem));
@@ -75,5 +78,4 @@ body {
 button {
 	outline: none;
 }
-
 </style>

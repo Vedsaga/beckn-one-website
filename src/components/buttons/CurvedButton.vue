@@ -47,7 +47,9 @@ export default {
 	&:disabled {
 		cursor: not-allowed;
 		background: var(--gray-complement);
+		color: var(--dark-bg-header);
 		opacity: 0.55;
+		box-shadow: none;
 		&:hover {
 			transform: none;
 		}

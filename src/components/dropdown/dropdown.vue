@@ -1,10 +1,10 @@
 <template>
-	<div @click="toggle" class="dropdown" v-on:clickaway="hideDropdown" v-on:click="getSelectedElement(selectedElement)">
-		<label for="label"
+	<div @click="toggle" class="dropdown" v-on:clickaway="hideDropdown">
+		<label :for="id"
 			><strong>{{ labelName }}</strong>
 		</label>
-		<div id="label" class="dropdown-box">
-			{{ selectedElement }}
+		<div :id="id" class="dropdown-box">
+			{{ modelValue }}
 			<img :class="[active ? 'dropdown-box-img' : '']" src="@/assets/svgs/dropdown.svg" alt="custom-dropdown icon" />
 		</div>
 		<div v-if="active" class="dropdown-list">
@@ -12,7 +12,7 @@
 				class="dropdown-list-element"
 				v-for="(element, index) in listOfElements"
 				:key="index"
-				@click="setSelectedElement(element)"
+				@click="updateSelectedElement(element)"
 			>
 				{{ element }}
 			</div>
@@ -28,18 +28,20 @@ export default {
 			type: Array,
 			required: true,
 		},
-		getSelectedElement: {
-			type: Function,
+		id: {
+			type: String,
 			required: true,
 		},
 		labelName: {
 			type: String,
 			required: true,
 		},
+		modelValue: {
+			type: String,
+		},
 	},
 	data() {
 		return {
-			selectedElement: null,
 			active: false,
 		};
 	},
@@ -47,8 +49,8 @@ export default {
 		toggle() {
 			this.active = !this.active;
 		},
-		setSelectedElement(element) {
-			this.selectedElement = element;
+		updateSelectedElement(value) {
+			this.$emit("update:modelValue", value);
 		},
 		hideDropdown() {
 			this.active = false;
@@ -128,7 +130,6 @@ export default {
 					border-top-left-radius: var(--small-border-radius);
 					border-top-right-radius: var(--small-border-radius);
 				}
-
 				// apply radius to the bottom right and bottom left corner for last element
 				&:last-child {
 					border-bottom-left-radius: var(--small-border-radius);
