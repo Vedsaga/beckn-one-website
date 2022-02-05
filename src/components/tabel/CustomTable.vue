@@ -32,7 +32,6 @@
 
 <script>
 import SmallButton from "@/components/buttons/SmallButton";
-import { inject } from "vue";
 export default {
 	name: "CustomTable",
 	components: {
@@ -40,24 +39,54 @@ export default {
 	},
 	data() {
 		return {
-			headers: [],
-			items: [],
-			fields: [],
-			sortKey: null,
-			sortOrders: {},
-			sortOrder: 1,
-			tableData: inject("dataArray", []),
+			tableData: [],
 		};
 	},
 	props: {
+		dataArray: {
+			type: Array,
+		},
 		remove: {
 			type: Function,
+			required: true,
 		},
 		edit: {
 			type: Function,
+			required: true,
 		},
 	},
-};
+	created() {
+		this.filterDataForTable();
+	},
+	methods: {
+		filterDataForTable() {
+			const toBeIncludes = ["domainDescription", "roleType", "subscriberId", "url", "status"];
+			const data = this.dataArray;
+			if (data.length) {
+				return data.map((item) => {
+					const newItem = [];
+					toBeIncludes.forEach((key) => {
+						newItem.push(item[key]);
+					});
+					if(this.tableData.length === 0) {
+						this.tableData.push(newItem);
+					} else {
+						const isExist = this.tableData.find((element) => {
+							return element[2] === newItem[2];
+						});
+						if(!isExist) {
+							this.tableData.push(newItem);
+						}
+						if(isExist) {
+							this.tableData.splice(this.tableData.indexOf(isExist), 1);
+							this.tableData.push(newItem);
+						}
+					}
+				})
+			}
+		},
+	},
+}
 </script>
 <style lang="scss" scoped>
 .table {

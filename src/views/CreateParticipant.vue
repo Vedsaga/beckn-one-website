@@ -56,7 +56,7 @@
 					</SquareButton>
 				</div>
 				<div class="main-grid-info">
-					<CustomTable v-model="tableData" edit="" :remove="removeNetworkRole"></CustomTable>
+					<CustomTable v-model:data-array="listOfNetworkRolesCreated" edit="" :remove="removeNetworkRole" ></CustomTable>
 				</div>
 			</div>
 			<div v-if="networkRoleDone !== true" class="main-progress-role-input">
@@ -120,7 +120,6 @@ import CustomTable from "@/components/tabel/CustomTable";
 import SquareButton from "@/components/buttons/SquareButton";
 import router from "@/router";
 import CustomTextArea from "@/components/inputs/CustomTextArea";
-import { computed, provide, ref } from "vue";
 
 export default {
 	name: "CreateParticipant",
@@ -157,20 +156,6 @@ export default {
 			subscriberId: null,
 			listOfNetworkRolesCreated: [],
 			tableData: [],
-		};
-	},
-	provide() {
-		const dataArray = ref(
-			computed(() => {
-				return this.tableData;
-			})
-		);
-		provide(
-			"dataArray",
-			computed(() => dataArray)
-		);
-		return {
-			dataArray,
 		};
 	},
 	methods: {
@@ -337,11 +322,7 @@ export default {
 						console.log("Error: " + response.status);
 						return;
 					}
-					console.log("---------list----before------------", this.listOfNetworkRolesCreated);
-					console.log("------tableData-- After---", this.tableData);
 					this.removeNetworkRoleFromList(subscriberId);
-					console.log("---------list----before------------", this.listOfNetworkRolesCreated);
-					console.log("------tableData-- After---", this.tableData);
 				})
 				.catch((error) => {
 					console.log(error);
