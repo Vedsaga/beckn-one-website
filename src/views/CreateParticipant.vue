@@ -56,19 +56,18 @@
 					</SquareButton>
 				</div>
 				<div class="main-grid-info">
-					<Table :data="tableData"></Table>
+					<CustomTable v-model="tableData" edit="" :remove="removeNetworkRole"></CustomTable>
 				</div>
 			</div>
 			<div v-if="networkRoleDone !== true" class="main-progress-role-input">
 				<Dropdown
 					:list-of-elements="ListOfNetworkDomains"
 					label-name=" Network Domain"
-					@click="getNetworkDomainList"
 					id="domain"
 					v-model="networkDomain"
 				>
 				</Dropdown>
-				<Dropdown :list-of-elements="ListOfNetworkRoles" label-name="Role Type" id="roles" v-model="networkRole">
+				<Dropdown :list-of-elements="ListOfNetworkRolesOptions" label-name="Role Type" id="roles" v-model="networkRole">
 					>
 				</Dropdown>
 				<CustomInput
@@ -93,7 +92,7 @@
 				></Dropdown>
 			</div>
 			<div id="actions">
-				<CurvedButton  v-if="networkRoleDone !== true" @click="createNetworkRole(networkDomain)">
+				<CurvedButton v-if="networkRoleDone !== true" @click="createNetworkRole(networkDomain)">
 					Save & Next
 				</CurvedButton>
 				<CurvedButton id="cancel" v-if="networkRoleDone !== true" @click="networkRoleDone = true"> Cancel</CurvedButton>
@@ -117,10 +116,11 @@ import PostLoginHeader from "@/components/headers/PostLoginHeader";
 import CustomInput from "@/components/inputs/CustomInput";
 import CurvedButton from "@/components/buttons/CurvedButton";
 import Dropdown from "@/components/dropdown/dropdown";
-import Table from "@/components/tabel/Table";
+import CustomTable from "@/components/tabel/CustomTable";
 import SquareButton from "@/components/buttons/SquareButton";
 import router from "@/router";
 import CustomTextArea from "@/components/inputs/CustomTextArea";
+import { computed, provide, ref } from "vue";
 
 export default {
 	name: "CreateParticipant",
@@ -129,14 +129,12 @@ export default {
 		CustomInput,
 		CurvedButton,
 		Dropdown,
-		Table,
+		CustomTable,
 		SquareButton,
 		CustomTextArea,
 	},
 	data() {
 		return {
-			testing: "",
-			tableData: [],
 			currentTab: "participantInfoPage",
 			participantID: null,
 			participantDetails: null,
@@ -148,21 +146,64 @@ export default {
 			participationKeyDone: false,
 			networkDomain: null,
 			domainID: null,
+			domainDescription: null,
 			ListOfNetworkDomains: [],
 			ListOfMapOfNetworkDomains: [],
 			networkRole: null,
-			ListOfNetworkRoles: ["BAP", "BPP", "BG", "LREG", "CREG", "RREG"],
+			ListOfNetworkRolesOptions: ["BAP", "BPP", "BG", "LREG", "CREG", "RREG"],
 			roleStatus: null,
 			ListOfRoleStatus: ["INITIATED", "SUBSCRIBED", "UNDER_SUBSCRIPTION", "UNSUBSCRIBED", "INVALID_SSL"],
 			url: null,
 			subscriberId: null,
-			networkRoleDetails: null,
+			listOfNetworkRolesCreated: [],
+			tableData: [],
 		};
 	},
-
+	provide() {
+		const dataArray = ref(
+			computed(() => {
+				return this.tableData;
+			})
+		);
+		provide(
+			"dataArray",
+			computed(() => dataArray)
+		);
+		return {
+			dataArray,
+		};
+	},
 	methods: {
-		addDataToTable(data) {
-			this.tableData.push(data);
+		filterDataForTable(data) {
+			const toBeIncludes = ["domainDescription", "roleType", "subscriberId", "url", "status"];
+			if (data.length) {
+				return data.map((item) => {
+					const newItem = [];
+					toBeIncludes.forEach((key) => {
+						newItem.push(item[key]);
+					});
+					// tableData is array which contain collection of arrays
+					// loop over tableData and then loop over tableData[index]
+					// if subscriberId is in tableData then update the value of that key
+					if (this.tableData.length) {
+						for (let i = 0; i < this.tableData.length; i++) {
+							console.log(this.tableData[i]["subscriberId"]);
+							const tableDataItem = this.tableData[i];
+							if (tableDataItem.includes(newItem)) {
+								for (let j = 0; j < tableDataItem.length; j++) {
+									if (tableDataItem[j] === newItem[j]) {
+										tableDataItem[j] = newItem[j];
+									}
+								}
+								return;
+							}
+						}
+					}
+					if (!this.tableData.length) {
+						this.tableData.push(newItem);
+					}
+				});
+			}
 		},
 		newNetworkParticipant: async function () {
 			await axios
@@ -181,21 +222,26 @@ export default {
 					}
 					if (response.status >= 500) {
 						alert("Internal Server Error");
-						// navigate to error page
 						router.push("/error");
 						return;
 					}
 					this.participantDetails = response.data["network_participants"][0];
-					this.participantInfoDone = true;
-					this.networkRolePage = true;
-					this.currentTab = "networkRolePage";
-					this.subscriberId = this.participantID;
+					this.getNetworkDomainList();
+					// wait for 1 second
+					setTimeout(() => {
+						this.getNetworkRolesList(this.participantDetails["id"]);
+					}, 1000);
+					setTimeout(() => {
+						this.participantInfoDone = true;
+						this.networkRolePage = true;
+						this.currentTab = "networkRolePage";
+						this.subscriberId = this.participantID;
+					}, 2000);
 				})
 				.catch((error) => {
 					console.log(error);
 				});
 		},
-
 		setTab: function (tab) {
 			this.currentTab = tab;
 		},
@@ -218,7 +264,8 @@ export default {
 					for (let index in rawData) {
 						this.ListOfMapOfNetworkDomains.push({
 							domain: rawData[index]["name"],
-							network_domain_id: rawData[index]["id"],
+							id: rawData[index]["id"],
+							description: rawData[index]["description"],
 						});
 						this.ListOfNetworkDomains.push(rawData[index]["name"]);
 					}
@@ -227,15 +274,36 @@ export default {
 					console.log(error);
 				});
 		},
-		setDomainID: function (domain) {
+		setDomainDetails: function (domain) {
 			for (let index in this.ListOfMapOfNetworkDomains) {
 				if (this.ListOfMapOfNetworkDomains[index]["domain"] === domain) {
-					this.domainID = this.ListOfMapOfNetworkDomains[index]["network_domain_id"];
+					this.domainID = this.ListOfMapOfNetworkDomains[index]["id"];
+					this.domainDescription = this.ListOfMapOfNetworkDomains[index]["description"];
+				}
+			}
+		},
+		returnFromListOfMapOfNetworkDomains: function (searchBy, value, askFor) {
+			if (searchBy && value && askFor) {
+				const ListOfMapOfNetworkDomains = this.ListOfMapOfNetworkDomains;
+				for (let index in ListOfMapOfNetworkDomains) {
+					if (ListOfMapOfNetworkDomains[index][searchBy] === value) {
+						return ListOfMapOfNetworkDomains[index][askFor];
+					}
+				}
+			}
+		},
+		returnFromListOfNetworkRolesCreated: function (searchBy, value, askFor) {
+			if (searchBy && value && askFor) {
+				const listOfNetworkRolesCreated = this.listOfNetworkRolesCreated;
+				for (let index in listOfNetworkRolesCreated) {
+					if (listOfNetworkRolesCreated[index][searchBy] === value) {
+						return listOfNetworkRolesCreated[index][askFor];
+					}
 				}
 			}
 		},
 		createNetworkRole: async function (domain) {
-			this.setDomainID(domain);
+			this.setDomainDetails(domain);
 			await axios
 				.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.newNetworkRole, {
 					network_domain_id: this.domainID,
@@ -250,15 +318,108 @@ export default {
 						console.log("Error: " + response.status);
 						return;
 					}
+					this.filterNetworkRole(response.data["network_roles"], "single");
 					this.networkRoleDone = true;
 					this.participationKeyPage = true;
 					this.currentTab = "participationKeyPage";
-					this.networkRoleDetails = response.data["network_roles"][0];
-					this.addDataToTable([domain, this.networkRole, this.subscriberId, this.url, this.roleStatus]);
 				})
 				.catch((error) => {
 					console.log(error);
 					console.log(error.response);
+				});
+		},
+		removeNetworkRole: async function (subscriberId) {
+			const roleId = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "roleId");
+			axios
+				.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.removeNetworkRole + roleId)
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					console.log("---------list----before------------", this.listOfNetworkRolesCreated);
+					console.log("------tableData-- After---", this.tableData);
+					this.removeNetworkRoleFromList(subscriberId);
+					console.log("---------list----before------------", this.listOfNetworkRolesCreated);
+					console.log("------tableData-- After---", this.tableData);
+				})
+				.catch((error) => {
+					console.log(error);
+					console.log(error.response);
+				});
+		},
+		removeNetworkRoleFromList: function (subscriberId) {
+			this.listOfNetworkRolesCreated = this.listOfNetworkRolesCreated.filter(
+				(participant) => participant.subscriberId !== subscriberId
+			);
+			this.tableData = this.tableData.filter((participant) => participant.subscriberId !== subscriberId);
+		},
+		filterNetworkRole: function (data, type) {
+			if (data.length) {
+				if (this.returnFromListOfNetworkRolesCreated("id", data["id"], "id")) {
+					console.log("Already Exists");
+					return;
+				}
+				if (type === "multiple") {
+					for (let index in data) {
+						this.listOfNetworkRolesCreated.push({
+							createdAt: data[index]["created_at"],
+							networkRoleId: data[index]["id"],
+							domainId: data[index]["network_domain"]["id"],
+							domainDescription: this.returnFromListOfMapOfNetworkDomains(
+								"id",
+								data[index]["network_domain"]["id"],
+								"description"
+							),
+							roleId: data[index]["id"],
+							status: data[index]["status"],
+							subscriberId: data[index]["subscriber_id"],
+							roleType: data[index]["type"],
+							updatedAt: data[index]["updated_at"],
+							url: data[index]["url"],
+						});
+					}
+				}
+
+				if (type === "single") {
+					const _data = data[0];
+					this.listOfNetworkRolesCreated.push({
+						createdAt: _data["created_at"],
+						networkRoleId: _data["id"],
+						domainId: _data["network_domain"]["id"],
+						domainDescription: this.returnFromListOfMapOfNetworkDomains(
+							"id",
+							_data["network_domain"]["id"],
+							"description"
+						),
+						roleId: _data["id"],
+						status: _data["status"],
+						subscriberId: _data["subscriber_id"],
+						roleType: _data["type"],
+						updatedAt: _data["updated_at"],
+						url: this.url,
+					});
+				}
+				this.filterDataForTable(this.listOfNetworkRolesCreated);
+				this.networkRolePage = true;
+				this.networkRoleDone = true;
+			}
+		},
+		getNetworkRolesList: async function (id) {
+			axios
+				.get(api_map.singleNetworkParticipant + id + api_map.networkRolesCreatedList)
+				.then((response) => {
+					// if response.status is 200 then route to the dashboard
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					if (response.data["network_roles"][0] !== undefined) {
+						this.filterNetworkRole(response.data["network_roles"], "multiple");
+					}
+				})
+				.catch((error) => {
+					console.log(error);
 				});
 		},
 	},

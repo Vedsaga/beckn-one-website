@@ -7,6 +7,8 @@ const apiDict = {
     removeNetworkParticipant: "/network_participants/destroy/",
     newNetworkParticipant: "/network_participants/save",
     networkDomainsList: "/network_domains",
+    networkRolesCreatedList: "/network_roles",
+    removeNetworkRole: "/network_roles/destroy/",
     newNetworkRole: "/network_roles/save",
     participantKeys: "/participant_keys",
 };

@@ -2,13 +2,13 @@
 	<div class="custom-area-text">
 		<label :for="Id">{{ label }}</label>
 		<textarea
-				cols="30"
-				rows="10"
-				:id="Id"
-				class="custom-input-design input-label"
-				:placeholder="placeholder"
-				:value="modelValue"
-				@input="updateValue($event.target.value)"
+			cols="30"
+			rows="10"
+			:id="Id"
+			class="custom-input-design input-label"
+			:placeholder="placeholder"
+			:value="modelValue"
+			@input="updateValue($event.target.value)"
 		>
 		</textarea>
 	</div>
@@ -20,28 +20,26 @@ export default {
 	props: {
 		placeholder: {
 			type: String,
-			required: true
+			required: true,
 		},
 		modelValue: {
-			type: String
+			type: String,
 		},
 		Id: {
 			type: String,
-			required: true
+			required: true,
 		},
 		label: {
 			type: String,
-			required: true
+			required: true,
 		},
 	},
 	methods: {
-		updateValue: function(value) {
+		updateValue: function (value) {
 			this.$emit("update:modelValue", value);
-		}
-	}
+		},
+	},
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

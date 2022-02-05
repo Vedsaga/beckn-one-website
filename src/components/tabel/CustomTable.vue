@@ -1,5 +1,5 @@
 <template>
-	<table v-if="data.length > 0" class="table" :data="data">
+	<table v-if="tableData.length > 0" class="table">
 		<thead>
 			<tr>
 				<th>Network Domain</th>
@@ -7,13 +7,19 @@
 				<th>Subscriber ID</th>
 				<th>URL</th>
 				<th>Status</th>
+				<th>Action</th>
 			</tr>
 		</thead>
-
 		<tbody>
-			<tr v-for="(item, index) in data" :key="index">
+			<tr v-for="(item, index) in tableData" :key="index">
 				<td v-for="(element, index) in item" :key="index">
 					{{ element }}
+				</td>
+				<td>
+					<div class="button">
+						<SmallButton class="button-edit">Edit</SmallButton>
+						<SmallButton class="button-danger" @click="remove(item[2])"> Delete</SmallButton>
+					</div>
 				</td>
 			</tr>
 		</tbody>
@@ -25,8 +31,13 @@
 </template>
 
 <script>
+import SmallButton from "@/components/buttons/SmallButton";
+import { inject } from "vue";
 export default {
-	name: "Table",
+	name: "CustomTable",
+	components: {
+		SmallButton,
+	},
 	data() {
 		return {
 			headers: [],
@@ -35,23 +46,19 @@ export default {
 			sortKey: null,
 			sortOrders: {},
 			sortOrder: 1,
+			tableData: inject("dataArray", []),
 		};
 	},
 	props: {
-		data: {
-			type: Array,
-			required: true,
+		remove: {
+			type: Function,
+		},
+		edit: {
+			type: Function,
 		},
 	},
-	// methods: {
-	// 	sortBy: function(key) {
-	// 			this.sortKey = key;
-	// 			this.sortOrders[key] = this.sortOrders[key] * -1;
-	// 	}
-	// },
 };
 </script>
-
 <style lang="scss" scoped>
 .table {
 	width: max-content;
@@ -112,7 +119,7 @@ export default {
 			&:hover {
 				box-shadow: var(--dark-shadow);
 				transition: all 0.3s ease-in-out;
-				background: var(--light-blue);
+				background: var(--dark-bg);
 				color: var(--white-bg);
 				transform: scale(1.02);
 			}
@@ -120,10 +127,31 @@ export default {
 	}
 }
 
+.button {
+	margin: 0 auto;
+	display: grid;
+	width: max-content;
+	gap: 1rem;
+	grid-template-columns: repeat(2, 1fr);
+	&-edit {
+		&:hover {
+			background: var(--light-blue);
+			transition: all 0.3s ease-in-out;
+			transform: scale(1.2);
+		}
+	}
+	&-danger {
+		&:hover {
+			background-color: var(--dark-red);
+			transition: all 0.3s ease-in-out;
+			transform: scale(1.2);
+		}
+	}
+}
+
 #empty {
 	margin: 0 auto;
 	text-align: center;
-
 	h2 {
 		color: var(--dark-bg-header);
 	}
