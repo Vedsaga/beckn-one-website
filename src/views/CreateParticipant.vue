@@ -170,6 +170,23 @@ export default {
 			toBeDeleted: null,
 		};
 	},
+	// add watchEffect to get the data from the api and store it in the data array of the table component and then display it in the table
+	watch: {
+		listOfNetworkRolesCreated: {
+			handler() {
+				if (this.listOfNetworkRolesCreated.length > 0) {
+					this.networkRoleDone = true;
+					this.participationKeyPage = true;
+				}
+				if (this.listOfNetworkRolesCreated.length === 0) {
+					this.networkRoleDone = false;
+					this.participationKeyPage = false;
+				}
+			},
+			deep: true,
+			immediate: true,
+		},
+	},
 	methods: {
 		newNetworkParticipant: async function () {
 			await axios
@@ -196,13 +213,13 @@ export default {
 					// wait for 1 second
 					setTimeout(() => {
 						this.getNetworkRolesList(this.participantDetails["id"]);
-					}, 1000);
+					}, 500);
 					setTimeout(() => {
 						this.participantInfoDone = true;
 						this.networkRolePage = true;
 						this.currentTab = "networkRolePage";
 						this.subscriberId = this.participantID;
-					}, 2000);
+					}, 500);
 				})
 				.catch((error) => {
 					console.log(error);

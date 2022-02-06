@@ -1,10 +1,10 @@
 <template>
 	<div class="custom-area-text">
-		<label :for="Id">{{ label }}</label>
+		<label :for="labelId">{{ label }}</label>
 		<textarea
 			cols="30"
 			rows="10"
-			:id="Id"
+			:id="labelId"
 			class="custom-input-design input-label"
 			:placeholder="placeholder"
 			:value="modelValue"
@@ -25,7 +25,7 @@ export default {
 		modelValue: {
 			type: String,
 		},
-		Id: {
+		labelId: {
 			type: String,
 			required: true,
 		},
