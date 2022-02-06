@@ -17,7 +17,7 @@
 				</td>
 				<td>
 					<div class="button">
-						<SmallButton class="button-edit">Edit</SmallButton>
+						<SmallButton class="button-edit" @click="edit(item[2])">Edit</SmallButton>
 						<SmallButton class="button-danger" @click="remove(item[2])"> Delete</SmallButton>
 					</div>
 				</td>
@@ -52,7 +52,7 @@ export default {
 		},
 		edit: {
 			type: Function,
-			required: true,
+		required: true,
 		},
 	},
 	created() {
@@ -68,25 +68,38 @@ export default {
 					toBeIncludes.forEach((key) => {
 						newItem.push(item[key]);
 					});
-					if(this.tableData.length === 0) {
+					if (this.tableData.length === 0) {
 						this.tableData.push(newItem);
 					} else {
 						const isExist = this.tableData.find((element) => {
 							return element[2] === newItem[2];
 						});
-						if(!isExist) {
+						if (!isExist) {
 							this.tableData.push(newItem);
 						}
-						if(isExist) {
+						if (isExist) {
 							this.tableData.splice(this.tableData.indexOf(isExist), 1);
 							this.tableData.push(newItem);
 						}
 					}
-				})
+				});
 			}
 		},
 	},
-}
+	watch: {
+		dataArray: {
+			handler(newVal, oldVal) {
+				//	if there is change in oldVal & newVal then re-filter the data
+				if (newVal !== oldVal) {
+					console.log("dataArray changed");
+					this.tableData = [];
+					this.filterDataForTable();
+				}
+			},
+			deep: true,
+		},
+	},
+};
 </script>
 <style lang="scss" scoped>
 .table {
