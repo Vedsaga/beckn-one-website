@@ -28,18 +28,20 @@
 			</div>
 			<div class="main-grid-info">
 				<div class="main-grid-info-button" v-for="(participant, index) in participantList" :key="index">
-					<div class="main-grid-info-content">
-						<span class="main-grid-info-content-text">
-							{{ participant["participant_name"] }}
-						</span>
-						<button
-							:class="{ 'cross-show': showRemoveIcon }"
-							class="cross"
-							@click="changeShow(participant.participant_id)"
-						>
-							<img alt="create icon" src="@/assets/svgs/cross.svg" />
-						</button>
-					</div>
+					<router-link :to="'/create-participant/' + participant.participant_id">
+						<div class="main-grid-info-content">
+							<span class="main-grid-info-content-text">
+								{{ participant["participant_name"] }}
+							</span>
+						</div>
+					</router-link>
+					<button
+						:class="{ 'cross-show': showRemoveIcon }"
+						class="cross"
+						@click="changeShow(participant.participant_id)"
+					>
+						<img alt="create icon" src="@/assets/svgs/cross.svg" />
+					</button>
 				</div>
 			</div>
 		</div>
@@ -70,9 +72,6 @@ export default {
 	},
 
 	created() {
-		// axios.get(api_map.currentUser, ).then((response) => {
-		// 	this.participantList = response.data;
-		// });
 		this.getParticipantList();
 	},
 
@@ -81,7 +80,6 @@ export default {
 			//	change the value of showRemoveIcon to true or false
 			this.showRemoveIcon = !this.showRemoveIcon;
 		},
-
 		changeShow: function (id) {
 			this.show = !this.show;
 			this.removeParticipantId = id;

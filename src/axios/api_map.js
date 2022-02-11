@@ -10,8 +10,9 @@ const apiDict = {
     networkRolesCreatedList: "/network_roles",
     removeNetworkRole: "/network_roles/destroy/",
     newNetworkRole: "/network_roles/save",
-    viewAllParticipantKeys: "/participant_keys",
-    generateKeys: "/generateKeys/",
+    getParticipantKeys: "/participant_keys",
+    generateKeys: "/network_participants/generateKeys/",
+    removeParticipantKey: "/participant_keys/destroy/",
 };
 
 export default apiDict;

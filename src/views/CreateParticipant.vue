@@ -5,7 +5,7 @@
 			<p>Are you sure you want to delete?</p>
 			<div class="modal-buttons">
 				<button id="no" @click="changeShow">cancel</button>
-				<button id="delete" @click="removeNetworkRole(toBeDeleted)">yes</button>
+				<button id="delete" @click="removeCollection(toBeDeleted, page.currentTab)">yes</button>
 			</div>
 		</div>
 	</div>
@@ -14,35 +14,37 @@
 		<div class="main-progress">
 			<CurvedButton
 				@click="setTab('participantInfoPage')"
-				:class="[participantInfoPage && participantInfoDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+				:class="[page.participantInfoPage && page.participantInfoDone ? 'main-progress-tab-done' : 'main-progress-tab']"
 			>
 				Participant Info
-				<img v-if="participantInfoDone" src="../assets/svgs/success.svg" alt="success" />
+				<img v-if="page.participantInfoDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
-			<div :class="[participantInfoDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
+			<div :class="[page.participantInfoDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
 			<CurvedButton
 				@click="setTab('networkRolePage')"
-				:disabled="!networkRolePage"
-				:class="[networkRolePage && networkRoleDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+				:disabled="!page.networkRolePage"
+				:class="[page.networkRolePage && page.networkRoleDone ? 'main-progress-tab-done' : 'main-progress-tab']"
 			>
 				Network Role
-				<img v-if="networkRoleDone" src="../assets/svgs/success.svg" alt="success" />
+				<img v-if="page.networkRoleDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
-			<div :class="[networkRoleDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
+			<div :class="[page.networkRoleDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
 			<CurvedButton
 				@click="setTab('participationKeyPage')"
-				:disabled="!participationKeyPage"
-				:class="[participationKeyPage && participationKeyDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+				:disabled="!page.participationKeyPage"
+				:class="[
+					page.participationKeyPage && page.participationKeyDone ? 'main-progress-tab-done' : 'main-progress-tab',
+				]"
 			>
 				Participation Key
-				<img v-if="participationKeyDone" src="../assets/svgs/success.svg" alt="success" />
+				<img v-if="page.participationKeyDone" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 		</div>
-		<section class="main-progress-participant" v-if="currentTab === 'participantInfoPage'">
+		<section class="main-progress-participant" v-if="page.currentTab === 'participantInfoPage'">
 			<CustomInput
 				id="ParticipantID"
 				placeholder="example.myID.com"
-				v-model="participantID"
+				v-model="participant.id"
 				label-id="participantId"
 				label-text="Please Enter Participant Id"
 				type="text"
@@ -51,25 +53,34 @@
 				<img src="@/assets/svgs/info.svg" alt="" />
 				<p>participant Id can be of your choices. This id will be your Subscriber Id too.</p>
 			</div>
-			<CurvedButton v-if="participantInfoDone !== true" @click="newNetworkParticipant"> Save & Next </CurvedButton>
-			<CurvedButton id="edit" v-if="participantInfoDone === true" @click="participantInfoDone = false">
+			<CurvedButton v-if="page.participantInfoDone !== true" @click="newNetworkParticipant"> Save & Next</CurvedButton>
+			<CurvedButton id="edit" v-if="page.participantInfoDone === true" @click="page.participantInfoDone = false">
 				<img src="@/assets/svgs/edit.svg" alt="" />
 				Edit
 			</CurvedButton>
 		</section>
-		<section class="main-progress-role" v-if="currentTab === 'networkRolePage'">
-			<div v-if="networkRoleDone === true" class="main-grid">
-				<div class="main-grid-button">
-					<SquareButton @click="networkRoleDone = false">
+		<section class="main-progress-role" v-if="page.currentTab === 'networkRolePage'">
+			<div v-if="page.networkRoleDone" class="main-grid">
+				<div class="main-grid-buttons">
+					<SquareButton @click="page.networkRoleDone = false">
 						Create
 						<img alt="create icon" src="@/assets/svgs/create.svg" />
 					</SquareButton>
 				</div>
-				<div class="main-grid-info">
-					<CustomTable v-model:data-array="listOfNetworkRolesCreated"  :remove="changeShow" :edit="setDataValueOnClickEdit"></CustomTable>
-				</div>
+				<CustomTable
+					v-model:data-array="listOfNetworkRolesCreated"
+					:remove="changeShow"
+					:edit="setDataValueOnClickEdit"
+					:header-list="table.headerForRolePage"
+					:to-be-shown="table.toBeShownForRolePage"
+					button-message="CREATE BUTTON"
+					head-warning="No Role have been defined yet!"
+					warning="Please create role by clicking on "
+					index="2"
+				>
+				</CustomTable>
 			</div>
-			<div v-if="networkRoleDone !== true" class="main-progress-role-input">
+			<div v-if="page.networkRoleDone !== true" class="main-progress-role-input">
 				<Dropdown
 					:list-of-elements="ListOfNetworkDomains"
 					label-name=" Network Domain"
@@ -101,20 +112,40 @@
 					v-model="roleStatus"
 				></Dropdown>
 			</div>
-			<div id="actions">
-				<CurvedButton v-if="networkRoleDone !== true" @click="createNetworkRole(networkDomain)">
-					Save & Next
-				</CurvedButton>
-				<CurvedButton id="cancel" v-if="networkRoleDone !== true" @click="networkRoleDone = true"> Cancel</CurvedButton>
+			<div class="actions" v-if="page.networkRoleDone !== true">
+				<CurvedButton @click="createNetworkRole(networkDomain)">Save & Next</CurvedButton>
+				<CurvedButton id="cancel" @click="page.networkRoleDone = true"> Cancel</CurvedButton>
 			</div>
 		</section>
-		<section class="main-key" v-if="currentTab === 'participationKeyPage'">
-			<p>To generate <strong>Participant Key</strong> click below button</p>
-			<CurvedButton>
-				Generate Key
-				<img src="../assets/svgs/key.svg" alt="success" />
-			</CurvedButton>
-			<CustomTextArea label-id="testing" label="testing" placeholder="testing...." v-model="testing"></CustomTextArea>
+		<section class="main-grid" v-if="page.currentTab === 'participationKeyPage'">
+			<div class="main-grid-buttons">
+				<SquareButton class="generateKey" @click="generateKey">
+					Generate
+					<img alt="create icon" src="@/assets/svgs/key.svg" />
+				</SquareButton>
+				<SquareButton @click="showPopup" class="enterKey">
+					Enter
+					<img alt="create icon" src="@/assets/svgs/key.svg" />
+				</SquareButton>
+			</div>
+			<CustomTable
+				v-model:data-array="listOfParticipantKeys"
+				:remove="changeShow"
+				:edit="showPopup"
+				:header-list="table.headerForParticipantKeyPage"
+				:to-be-shown="table.toBeShownForParticipantPage"
+				button-message="ENTER or GENERATE BUTTON"
+				head-warning="No Key have been created yet!"
+				warning="Please create key by clicking on"
+				index="0"
+			></CustomTable>
+			<CustomTextArea
+				v-if="false"
+				label-id="testing"
+				label="testing"
+				placeholder="testing...."
+				v-model="testing"
+			></CustomTextArea>
 		</section>
 	</div>
 </template>
@@ -144,22 +175,32 @@ export default {
 	},
 	data() {
 		return {
+			table: {
+				headerForRolePage: ["Network Domain", "Role Type", "Subscriber Id", "URL", "Role Status", "Action"],
+				toBeShownForRolePage: ["domainDescription", "roleType", "subscriberId", "url", "status"],
+				headerForParticipantKeyPage: ["Key ID", "Signing Key", "Encryption Key", "Valid From", "Valid To", "Action"],
+				toBeShownForParticipantPage: ["keyId", "signingPublicKey", "encryptPublicKey", "validFrom", "validUntil"],
+			},
+			participant: {
+				id: this.$route.params.id ? this.$route.params.id : null,
+				details: null,
+			},
 			show: false,
 			testing: "",
-			currentTab: "participantInfoPage",
-			participantID: null,
-			participantDetails: null,
-			participantInfoPage: true,
-			participantInfoDone: false,
-			networkRolePage: false,
-			networkRoleDone: false,
-			participationKeyPage: false,
-			participationKeyDone: false,
+			page: {
+				currentTab: "participantInfoPage",
+				participantInfoPage: true,
+				participantInfoDone: false,
+				networkRolePage: false,
+				networkRoleDone: false,
+				participationKeyPage: false,
+				participationKeyDone: false,
+			},
 			networkDomain: null,
 			domainID: null,
 			domainDescription: null,
 			ListOfNetworkDomains: [],
-			ListOfMapOfNetworkDomains: [],
+			listOfMapOfNetworkDomains: [],
 			networkRole: null,
 			ListOfNetworkRolesOptions: ["BAP", "BPP", "BG", "LREG", "CREG", "RREG"],
 			roleStatus: null,
@@ -168,19 +209,72 @@ export default {
 			subscriberId: null,
 			listOfNetworkRolesCreated: [],
 			toBeDeleted: null,
+			key: {
+				createdAt: null,
+				id: null,
+				encryptPublicKey: null,
+				keyId: null,
+				signingPublicKey: null,
+				lastUpdatedAt: null,
+				validFrom: null,
+				validUntil: null,
+				verified: null,
+			},
+			listOfParticipantKeys: [],
 		};
+	},
+	created() {
+		if (this.participant.id) {
+			this.getParticipantInfo(this.$route.params.id);
+		}
+		this.getNetworkDomainList();
 	},
 	// add watchEffect to get the data from the api and store it in the data array of the table component and then display it in the table
 	watch: {
 		listOfNetworkRolesCreated: {
 			handler() {
 				if (this.listOfNetworkRolesCreated.length > 0) {
-					this.networkRoleDone = true;
-					this.participationKeyPage = true;
+					this.page.networkRoleDone = true;
+					this.page.participationKeyPage = true;
 				}
 				if (this.listOfNetworkRolesCreated.length === 0) {
-					this.networkRoleDone = false;
-					this.participationKeyPage = false;
+					this.page.networkRoleDone = false;
+					this.page.participationKeyPage = false;
+				}
+			},
+			deep: true,
+			immediate: true,
+		},
+		participant: {
+			handler() {
+				if (this.participant.details !== null) {
+					this.participant.id = this.participant.details["participant_id"];
+					this.page.participantInfoDone = true;
+				}
+				if (this.participant.details === null) {
+					this.page.participantInfoDone = false;
+				}
+			},
+			deep: true,
+			immediate: true,
+		},
+		page: {
+			handler() {
+				if (this.page.participantInfoDone === true) {
+					this.getNetworkRolesList(this.participant.details["id"]);
+					this.page.networkRolePage = true;
+					this.page.networkRoleDone = true;
+				}
+				if (this.page.participantInfoDone === false) {
+					this.page.networkRolePage = false;
+				}
+				if (this.page.networkRoleDone === true) {
+					this.getParticipantKeys(this.participant.details["id"]);
+					this.page.participationKeyPage = true;
+					this.page.participationKeyDone = true;
+				}
+				if (this.page.networkRoleDone === false) {
+					this.page.participationKeyPage = false;
 				}
 			},
 			deep: true,
@@ -188,10 +282,26 @@ export default {
 		},
 	},
 	methods: {
+		showPopup() {
+			alert("We are working on it. Thank you for your patience :)");
+		},
+		getParticipantInfo(id) {
+			axios
+				.get(api_map.singleNetworkParticipant + id)
+				.then((response) => {
+					if (response.status === 200) {
+						this.participant.details = response.data;
+						this.page.participantInfoDone = true;
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		},
 		newNetworkParticipant: async function () {
 			await axios
 				.post(api_map.newNetworkParticipant, {
-					participant_id: this.participantID,
+					participant_id: this.participant.id,
 				})
 				.then((response) => {
 					// if response.status is 200 then route to the dashboard
@@ -208,17 +318,13 @@ export default {
 						router.push("/error");
 						return;
 					}
-					this.participantDetails = response.data["network_participants"][0];
-					this.getNetworkDomainList();
-					// wait for 1 second
+					this.participant.details = response.data["network_participants"][0];
+					this.getNetworkRolesList(this.participant.details["id"]);
 					setTimeout(() => {
-						this.getNetworkRolesList(this.participantDetails["id"]);
-					}, 500);
-					setTimeout(() => {
-						this.participantInfoDone = true;
-						this.networkRolePage = true;
-						this.currentTab = "networkRolePage";
-						this.subscriberId = this.participantID;
+						this.page.participantInfoDone = true;
+						this.page.networkRolePage = true;
+						this.page.currentTab = "networkRolePage";
+						this.page.subscriberId = this.participant.id;
 					}, 500);
 				})
 				.catch((error) => {
@@ -226,7 +332,7 @@ export default {
 				});
 		},
 		setTab: function (tab) {
-			this.currentTab = tab;
+			this.page.currentTab = tab;
 		},
 		getNetworkDomainList: async function () {
 			axios
@@ -242,10 +348,10 @@ export default {
 					if (rawData.length === 0) return;
 
 					this.ListOfNetworkDomains = [];
-					this.ListOfMapOfNetworkDomains = [];
+					this.listOfMapOfNetworkDomains = [];
 
 					for (let index in rawData) {
-						this.ListOfMapOfNetworkDomains.push({
+						this.listOfMapOfNetworkDomains.push({
 							domain: rawData[index]["name"],
 							id: rawData[index]["id"],
 							description: rawData[index]["description"],
@@ -258,56 +364,23 @@ export default {
 				});
 		},
 		setDomainDetails: function (domain) {
-			for (let index in this.ListOfMapOfNetworkDomains) {
-				if (this.ListOfMapOfNetworkDomains[index]["domain"] === domain) {
-					this.domainID = this.ListOfMapOfNetworkDomains[index]["id"];
-					this.domainDescription = this.ListOfMapOfNetworkDomains[index]["description"];
-				}
-			}
-		},
-		returnFromListOfMapOfNetworkDomains: function (searchBy, value, askFor) {
-			if (searchBy && value && askFor) {
-				const ListOfMapOfNetworkDomains = this.ListOfMapOfNetworkDomains;
-				for (let index in ListOfMapOfNetworkDomains) {
-					if (ListOfMapOfNetworkDomains[index][searchBy] === value) {
-						return ListOfMapOfNetworkDomains[index][askFor];
-					}
-				}
-			}
-		},
-		returnFromListOfNetworkRolesCreated: function (searchBy, value, askFor, newData, action) {
-			if (searchBy && value) {
-				const listOfNetworkRolesCreated = this.listOfNetworkRolesCreated;
-				for (let index in listOfNetworkRolesCreated) {
-					if (listOfNetworkRolesCreated[index][searchBy] === value) {
-						if(newData && action === "add"){
-								listOfNetworkRolesCreated[index] = newData;
-								this.listOfNetworkRolesCreated = listOfNetworkRolesCreated
-								return true;
-							}
-						if(action==="edit"){
-							return listOfNetworkRolesCreated[index]
-						}
-							if(action==="remove"){
-								this.changeShow();
-								this.listOfNetworkRolesCreated = listOfNetworkRolesCreated.filter(item => item !== listOfNetworkRolesCreated[index])
-								return true;
-						}
-						return listOfNetworkRolesCreated[index][askFor];
-					}
+			for (let index in this.listOfMapOfNetworkDomains) {
+				if (this.listOfMapOfNetworkDomains[index]["domain"] === domain) {
+					this.domainID = this.listOfMapOfNetworkDomains[index]["id"];
+					this.domainDescription = this.listOfMapOfNetworkDomains[index]["description"];
 				}
 			}
 		},
 		createNetworkRole: async function (domain) {
 			this.setDomainDetails(domain);
 			await axios
-				.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.newNetworkRole, {
+				.post(api_map.singleNetworkParticipant + this.participant.details["id"] + api_map.newNetworkRole, {
 					network_domain_id: this.domainID,
 					type: this.networkRole,
 					status: this.roleStatus,
 					subscriber_id: this.subscriberId,
 					url: this.url,
-					network_participant_id: this.participantDetails["id"],
+					network_participant_id: this.participant.details["id"],
 				})
 				.then((response) => {
 					if (response.status !== 200) {
@@ -315,39 +388,30 @@ export default {
 						return;
 					}
 					this.filterNetworkRole(response.data["network_roles"], "single");
-					this.networkRoleDone = true;
-					this.participationKeyPage = true;
+					this.page.networkRoleDone = true;
+					this.page.participationKeyPage = true;
 				})
 				.catch((error) => {
 					console.log(error);
 					console.log(error.response);
 				});
 		},
-		removeNetworkRole: async function (subscriberId) {
-			const id = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id");
-			axios
-				.post(api_map.singleNetworkParticipant + this.participantDetails["id"] + api_map.removeNetworkRole + id)
-				.then((response) => {
-					if (response.status !== 200) {
-						console.log("Error: " + response.status);
-					return}
-					this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id", null, "remove");
-				})
-				.catch((error) => {
-					console.log(error);
-					console.log(error.response);
-				});
+		returnFromListOfMapOfNetworkDomains: function (searchBy, value, askFor) {
+			if (searchBy && value && askFor) {
+				const listOfMapOfNetworkDomains = this.listOfMapOfNetworkDomains;
+				for (let index in listOfMapOfNetworkDomains) {
+					if (listOfMapOfNetworkDomains[index][searchBy] === value) {
+						return listOfMapOfNetworkDomains[index][askFor];
+					}
+				}
+			}
 		},
 		extractNetworkData: function (data) {
 			return {
 				createdAt: data["created_at"],
 				networkRoleId: data["id"],
 				domainId: data["network_domain"]["id"],
-				domainDescription: this.returnFromListOfMapOfNetworkDomains(
-						"id",
-						data["network_domain"]["id"],
-						"description"
-				),
+				domainDescription: this.returnFromListOfMapOfNetworkDomains("id", data["network_domain"]["id"], "description"),
 				id: data["id"],
 				status: data["status"],
 				subscriberId: data["subscriber_id"],
@@ -362,22 +426,76 @@ export default {
 					for (let index in data) {
 						this.listOfNetworkRolesCreated.push(this.extractNetworkData(data[index]));
 					}
-					this.networkRolePage = true;
-					this.networkRoleDone = true;
+					this.page.networkRolePage = true;
+					this.page.networkRoleDone = true;
 					return;
 				}
 				const _data = data[0];
 				if (this.returnFromListOfNetworkRolesCreated("id", _data["id"], "id", this.extractNetworkData(_data), "add")) {
-					this.networkRolePage = true;
-					this.networkRoleDone = true;
+					this.page.networkRolePage = true;
+					this.page.networkRoleDone = true;
 					return;
 				}
 				if (type === "single") {
 					this.listOfNetworkRolesCreated.push(this.extractNetworkData(_data));
-					this.networkRolePage = true;
-					this.networkRoleDone = true;
+					this.page.networkRolePage = true;
+					this.page.networkRoleDone = true;
 				}
 			}
+		},
+		returnFromListOfNetworkRolesCreated: function (searchBy, value, askFor, newData, action) {
+			if (searchBy && value) {
+				const listOfNetworkRolesCreated = this.listOfNetworkRolesCreated;
+				for (let index in listOfNetworkRolesCreated) {
+					if (listOfNetworkRolesCreated[index][searchBy] === value) {
+						if (newData && action === "add") {
+							listOfNetworkRolesCreated[index] = newData;
+							this.listOfNetworkRolesCreated = listOfNetworkRolesCreated;
+							return true;
+						}
+						if (action === "edit") {
+							return listOfNetworkRolesCreated[index];
+						}
+						if (action === "remove") {
+							this.changeShow();
+							this.listOfNetworkRolesCreated = listOfNetworkRolesCreated.filter(
+								(item) => item !== listOfNetworkRolesCreated[index]
+							);
+							return true;
+						}
+						return listOfNetworkRolesCreated[index][askFor];
+					}
+				}
+			}
+		},
+		setDataValueOnClickEdit: function (subscriberId) {
+			const received = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, null, null, "edit");
+			if (received) {
+				this.networkDomain = this.returnFromListOfMapOfNetworkDomains("id", received["domainId"], "domain");
+				this.networkRole = received["roleType"];
+				this.roleStatus = received["status"];
+				this.subscriberId = received["subscriberId"];
+				this.url = received["url"];
+				this.page.currentTab = "networkRolePage";
+				this.page.networkRolePage = true;
+				this.page.networkRoleDone = false;
+			}
+		},
+		removeNetworkRole: async function (subscriberId) {
+			const id = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id");
+			axios
+				.post(api_map.singleNetworkParticipant + this.participant.details["id"] + api_map.removeNetworkRole + id)
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id", null, "remove");
+				})
+				.catch((error) => {
+					console.log(error);
+					console.log(error.response);
+				});
 		},
 		getNetworkRolesList: async function (id) {
 			axios
@@ -400,17 +518,130 @@ export default {
 			this.show = !this.show;
 			this.toBeDeleted = id;
 		},
-		setDataValueOnClickEdit:function (subscriberId){
-			const received = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, null, null, "edit");
-			if(received){
-				this.networkDomain = this.returnFromListOfMapOfNetworkDomains("id", received["domainId"], "domain");
-				this.networkRole = received["roleType"];
-				this.roleStatus = received["status"];
-				this.subscriberId = received["subscriberId"];
-				this.url = received["url"];
-				this.currentTab="networkRolePage";
-				this.networkRolePage = true;
-				this.networkRoleDone = false;
+		filterParticipantKeys: function (data) {
+			if (data.length) {
+				for (let index in data) {
+					this.setKey(data[index]);
+					if (this.returnFromListOfParticipantKeys("keyId", data[index]["key_id"], null, "add")) {
+						// set null the all value for each key in this.keys
+						this.getDefaultValue();
+						this.page.participationKeyPage = true;
+						this.page.participationKeyDone = true;
+					} else {
+						this.listOfParticipantKeys.push(this.key);
+						return true;
+					}
+				}
+			}
+		},
+		setKey: function (data) {
+			return (this.key = {
+				createdAt: data["created_at"],
+				encryptPublicKey: data["encr_public_key"],
+				id: data["id"],
+				keyId: data["key_id"],
+				signingPublicKey: data["signing_public_key"],
+				lastUpdatedAt: data["updated_at"],
+				validFrom: data["valid_from"],
+				validUntil: data["valid_until"],
+				verified: data["verified"],
+			});
+		},
+		getDefaultValue: function () {
+			// set null the all value for each key in this.keys
+			this.key = {
+				createdAt: null,
+				encryptPublicKey: null,
+				id: null,
+				keyId: null,
+				signingPublicKey: null,
+				lastUpdatedAt: null,
+				validFrom: null,
+				validUntil: null,
+				verified: null,
+			};
+		},
+		generateKey: async function () {
+			axios
+				.post(api_map.generateKeys + this.participant.details["id"])
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					this.getParticipantKeys(this.participant.details["id"]);
+				})
+				.catch((error) => {
+					console.log(error);
+					console.log(error.response);
+				});
+		},
+		returnFromListOfParticipantKeys: function (searchBy, value, askFor, action) {
+			if (searchBy && value) {
+				const listOfParticipantKeys = this.listOfParticipantKeys;
+				if (this.listOfParticipantKeys.length < 1) {
+					this.listOfParticipantKeys.push(this.key);
+					return true;
+				}
+				for (let index in listOfParticipantKeys) {
+					if (listOfParticipantKeys[index][searchBy] === value) {
+						if (action === "add") {
+							listOfParticipantKeys[index] = this.key;
+							this.listOfParticipantKeys = listOfParticipantKeys;
+							return true;
+						}
+						if (action === "remove") {
+							this.listOfParticipantKeys = listOfParticipantKeys.filter(
+								(item) => item !== listOfParticipantKeys[index]
+							);
+						}
+						return listOfParticipantKeys[index][askFor];
+					}
+				}
+			}
+		},
+		removeParticipantKey: async function (keyId) {
+			const toBeRemove = this.returnFromListOfParticipantKeys("keyId", keyId, "id");
+			axios
+				.post(
+					api_map.singleNetworkParticipant + this.participant.details["id"] + api_map.removeParticipantKey + toBeRemove
+				)
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+					}
+					this.changeShow();
+					this.returnFromListOfParticipantKeys("keyId", keyId, null, "remove");
+				})
+				.catch((error) => {
+					console.log(error);
+					console.log(error.response);
+				});
+		},
+		getParticipantKeys: async function (id) {
+			axios
+				.get(api_map.singleNetworkParticipant + id + api_map.getParticipantKeys)
+				.then((response) => {
+					// if response.status is 200 then route to the dashboard
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					if (response.data["participant_keys"][0] !== undefined) {
+						this.filterParticipantKeys(response.data["participant_keys"]);
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		},
+		removeCollection: function (value, pageName) {
+			console.log(value, pageName);
+			if (pageName === "networkRolePage") {
+				this.removeNetworkRole(value);
+			}
+			if (pageName === "participationKeyPage") {
+				this.removeParticipantKey(value);
 			}
 		},
 	},
@@ -487,6 +718,7 @@ export default {
 	border-radius: 0.5em;
 	padding: 0.5em 1.5em;
 }
+
 .main {
 	display: flex;
 	flex-direction: column;
@@ -508,7 +740,7 @@ export default {
 		&-buttons {
 			height: 14.625em;
 			display: grid;
-			padding: 1rem;
+			column-gap: 1rem;
 		}
 	}
 
@@ -583,20 +815,27 @@ export default {
 		}
 
 		&-key {
-			display: flex;
-			width: max-content;
-			flex-direction: column;
-			margin: auto;
-			align-items: center;
-			position: relative;
-			z-index: 100;
-			bottom: 20em;
-			float: top;
+			display: grid;
+			grid-gap: 1em;
+			margin-right: auto;
 		}
+	}
+
+	&-key {
+		display: flex;
+		margin: 0 auto;
+		flex-direction: column;
+		align-content: center;
+		align-items: center;
+		align-self: center;
+		position: relative;
+		z-index: 100;
+		bottom: 20em;
+		float: top;
 	}
 }
 
-#actions {
+.actions {
 	display: flex;
 	gap: 3.5em;
 }
@@ -607,5 +846,25 @@ export default {
 
 #cancel {
 	background: var(--dark-red);
+}
+
+.enterKey {
+	background: var(--dark-bg);
+	color: var(--white-bg);
+
+	&:hover {
+		background: var(--dark-bg);
+		color: var(--white-bg);
+	}
+}
+
+.generateKey {
+	background: var(--light-blue);
+	color: var(--white-bg);
+
+	&:hover {
+		background: var(--light-blue);
+		color: var(--white-bg);
+	}
 }
 </style>

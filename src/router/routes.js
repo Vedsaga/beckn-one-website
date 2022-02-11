@@ -32,7 +32,6 @@ export default [
             requiresAuth: true,
         },
     },
-
     {
         path: "/create-participant",
         name: "CreateParticipant",

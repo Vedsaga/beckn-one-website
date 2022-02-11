@@ -2,12 +2,7 @@
 	<table v-if="tableData.length > 0" class="table">
 		<thead>
 			<tr>
-				<th>Network Domain</th>
-				<th>Role Type</th>
-				<th>Subscriber ID</th>
-				<th>URL</th>
-				<th>Status</th>
-				<th>Action</th>
+				<th v-for="(item, index) in headerList" :key="index">{{ item }}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -17,16 +12,18 @@
 				</td>
 				<td>
 					<div class="button">
-						<SmallButton class="button-edit" @click="edit(item[2])">Edit</SmallButton>
-						<SmallButton class="button-danger" @click="remove(item[2])"> Delete</SmallButton>
+						<SmallButton class="button-edit" @click="edit(item[position])">Edit</SmallButton>
+						<SmallButton class="button-danger" @click="remove(item[position])"> Delete</SmallButton>
 					</div>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	<div id="empty" v-else>
-		<h2>No Role have been defined yet!</h2>
-		<p>Please create role by clicking on <strong>CREATE BUTTON</strong></p>
+		<h2>{{ headWarning }}</h2>
+		<p>
+			{{ warning }}<strong>{{ buttonMessage }}</strong>
+		</p>
 	</div>
 </template>
 
@@ -40,9 +37,14 @@ export default {
 	data() {
 		return {
 			tableData: [],
+			position: parseInt(this.index),
 		};
 	},
 	props: {
+		index: {
+			type: String,
+			required: true,
+		},
 		dataArray: {
 			type: Array,
 		},
@@ -52,7 +54,27 @@ export default {
 		},
 		edit: {
 			type: Function,
-		required: true,
+			required: true,
+		},
+		headerList: {
+			type: Array,
+			required: true,
+		},
+		toBeShown: {
+			type: Array,
+			required: true,
+		},
+		headWarning: {
+			type: String,
+			required: true,
+		},
+		warning: {
+			type: String,
+			required: true,
+		},
+		buttonMessage: {
+			type: String,
+			required: true,
 		},
 	},
 	created() {
@@ -60,7 +82,7 @@ export default {
 	},
 	methods: {
 		filterDataForTable() {
-			const toBeIncludes = ["domainDescription", "roleType", "subscriberId", "url", "status"];
+			const toBeIncludes = this.toBeShown;
 			const data = this.dataArray;
 			if (data.length) {
 				return data.map((item) => {
@@ -72,7 +94,7 @@ export default {
 						this.tableData.push(newItem);
 					} else {
 						const isExist = this.tableData.find((element) => {
-							return element[2] === newItem[2];
+							return element[this.position] === newItem[this.position];
 						});
 						if (!isExist) {
 							this.tableData.push(newItem);
@@ -89,14 +111,13 @@ export default {
 	watch: {
 		dataArray: {
 			handler(newVal, oldVal) {
-				//	if there is change in oldVal & newVal then re-filter the data
 				if (newVal !== oldVal) {
-					console.log("dataArray changed");
 					this.tableData = [];
 					this.filterDataForTable();
 				}
 			},
 			deep: true,
+			immediate: true,
 		},
 	},
 };
