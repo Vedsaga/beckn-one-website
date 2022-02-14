@@ -3,6 +3,7 @@ import LoginPage from "@/views/LoginPage";
 import Dashboard from "@/views/Dashboard";
 import CreateParticipant from "@/views/CreateParticipant";
 import _404 from "@/views/404";
+import ViewTestRoles from "@/views/View-Test-Roles";
 
 export default [
     {
@@ -41,10 +42,23 @@ export default [
             requiresAuth: true,
         },
     },
-
+    {
+        path: "/view-test-roles/:id",
+        name: "ViewTestRoles",
+        component: ViewTestRoles,
+        meta: {
+            title: "View Test Roles",
+            requiresAuth: true,
+        },
+    },
     {
         path: "/:catchAll(.*)",
         name: "NotFound",
         component: _404,
+        meta: {
+            title: "404",
+            requiresAuth: false,
+        },
     },
+
 ];

@@ -1,22 +1,22 @@
 <template>
 	<table v-if="tableData.length > 0" class="table">
 		<thead>
-			<tr>
-				<th v-for="(item, index) in headerList" :key="index">{{ item }}</th>
-			</tr>
+		<tr>
+			<th v-for="(item, index) in headerList" :key="index">{{ item }}</th>
+		</tr>
 		</thead>
 		<tbody>
-			<tr v-for="(item, index) in tableData" :key="index">
-				<td v-for="(element, index) in item" :key="index">
-					{{ element }}
-				</td>
-				<td>
-					<div class="button">
-						<SmallButton class="button-edit" @click="edit(item[position])">Edit</SmallButton>
-						<SmallButton class="button-danger" @click="remove(item[position])"> Delete</SmallButton>
-					</div>
-				</td>
-			</tr>
+		<tr v-for="(item, index) in tableData" :key="index">
+			<td @click="onClick(item[position])" v-for="(element, index) in item" :key="index">
+				{{ element }}
+			</td>
+			<td>
+				<div class="button">
+					<SmallButton class="button-edit" @click="edit(item[position])">Edit</SmallButton>
+					<SmallButton class="button-danger" @click="remove(item[position])"> Delete</SmallButton>
+				</div>
+			</td>
+		</tr>
 		</tbody>
 	</table>
 	<div id="empty" v-else>
@@ -29,58 +29,65 @@
 
 <script>
 import SmallButton from "@/components/buttons/SmallButton";
+
 export default {
 	name: "CustomTable",
 	components: {
-		SmallButton,
+		SmallButton
 	},
 	data() {
 		return {
 			tableData: [],
-			position: parseInt(this.index),
+			position: parseInt(this.index)
 		};
 	},
 	props: {
 		index: {
 			type: String,
-			required: true,
+			required: true
 		},
 		dataArray: {
-			type: Array,
+			type: Array
 		},
 		remove: {
 			type: Function,
-			required: true,
+			required: true
 		},
 		edit: {
 			type: Function,
-			required: true,
+			required: true
 		},
 		headerList: {
 			type: Array,
-			required: true,
+			required: true
 		},
 		toBeShown: {
 			type: Array,
-			required: true,
+			required: true
 		},
 		headWarning: {
 			type: String,
-			required: true,
+			required: true
 		},
 		warning: {
 			type: String,
-			required: true,
+			required: true
 		},
 		buttonMessage: {
 			type: String,
-			required: true,
+			required: true
 		},
+		routeToThisId: {
+			type: Function,
+		}
 	},
 	created() {
 		this.filterDataForTable();
 	},
 	methods: {
+		onClick(item) {
+			this.routeToThisId(item);
+		},
 		filterDataForTable() {
 			const toBeIncludes = this.toBeShown;
 			const data = this.dataArray;
@@ -106,7 +113,7 @@ export default {
 					}
 				});
 			}
-		},
+		}
 	},
 	watch: {
 		dataArray: {
@@ -117,9 +124,9 @@ export default {
 				}
 			},
 			deep: true,
-			immediate: true,
-		},
-	},
+			immediate: true
+		}
+	}
 };
 </script>
 <style lang="scss" scoped>
@@ -134,6 +141,7 @@ export default {
 			height: 5.3rem;
 			box-shadow: var(--dark-shadow);
 			border-radius: var(--medium-border-radius);
+
 			th {
 				margin: 2px;
 				padding: var(--small-padding);
@@ -149,6 +157,7 @@ export default {
 					background: var(--dark-yellow);
 					transition: background-color 0.5s ease-in-out;
 				}
+
 				&-active {
 					background-color: var(--light-green);
 					transition: background-color 0.5s ease-in-out;
@@ -156,38 +165,41 @@ export default {
 				}
 			}
 		}
+
 	}
+}
 
-	tbody {
-		tr {
-			border: #4caf50 solid 1px;
-			height: 5.3rem;
-			font-size: 0.8125rem;
-			font-weight: 500;
-			td {
-				border-radius: var(--small-border-radius);
-				margin: 0.2rem;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				text-align: center;
-				padding: var(--small-padding);
-				transition: all 0.3s ease-in-out;
-			}
+tbody {
+	tr {
+		border: #4caf50 solid 1px;
+		height: 5.3rem;
+		font-size: 0.8125rem;
+		font-weight: 500;
 
-			//	apply gray background to even columns
-			&:nth-child(even) {
-				background-color: var(--white-bg-header);
-			}
+		td {
+			border-radius: var(--small-border-radius);
+			margin: 0.2rem;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-align: center;
+			padding: var(--small-padding);
+			transition: all 0.3s ease-in-out;
+		}
 
-			&:hover {
-				box-shadow: var(--dark-shadow);
-				transition: all 0.3s ease-in-out;
-				background: var(--dark-bg);
-				color: var(--white-bg);
-				transform: scale(1.02);
-			}
+		//	apply gray background to even columns
+		&:nth-child(even) {
+			background-color: var(--white-bg-header);
+		}
+
+		&:hover {
+			box-shadow: var(--dark-shadow);
+			transition: all 0.3s ease-in-out;
+			background: var(--dark-bg);
+			color: var(--white-bg);
+			transform: scale(1.02);
 		}
 	}
+
 }
 
 .button {
@@ -196,6 +208,7 @@ export default {
 	width: max-content;
 	gap: 1rem;
 	grid-template-columns: repeat(2, 1fr);
+
 	&-edit {
 		&:hover {
 			background: var(--light-blue);
@@ -203,6 +216,7 @@ export default {
 			transform: scale(1.2);
 		}
 	}
+
 	&-danger {
 		&:hover {
 			background-color: var(--dark-red);
@@ -215,9 +229,11 @@ export default {
 #empty {
 	margin: 0 auto;
 	text-align: center;
+
 	h2 {
 		color: var(--dark-bg-header);
 	}
+
 	p {
 		color: var(--info-text);
 	}
