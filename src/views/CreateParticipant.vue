@@ -23,10 +23,10 @@
 			<CurvedButton
 				@click="setTab('networkRolePage')"
 				:disabled="!page.networkRolePage"
-				:class="[page.networkRolePage && page.networkRoleDone ? 'main-progress-tab-done' : 'main-progress-tab']"
+				:class="[page.networkRoleDone && listOfNetworkRolesCreated.length > 0 ? 'main-progress-tab-done' : 'main-progress-tab']"
 			>
 				Network Role
-				<img v-if="page.networkRoleDone" src="../assets/svgs/success.svg" alt="success" />
+				<img v-if="(page.networkRoleDone && listOfNetworkRolesCreated.length > 0)" src="../assets/svgs/success.svg" alt="success" />
 			</CurvedButton>
 			<div :class="[page.networkRoleDone ? 'main-progress-line-done' : 'main-progress-line']"></div>
 			<CurvedButton
@@ -80,7 +80,7 @@
 				>
 				</CustomTable>
 			</div>
-			<div v-if="page.networkRoleDone !== true" class="main-progress-role-input">
+			<div v-if="!page.networkRoleDone" class="main-progress-role-input">
 				<Dropdown
 					:list-of-elements="ListOfNetworkDomains"
 					label-name=" Network Domain"
@@ -94,7 +94,7 @@
 				<CustomInput
 					label-id="subscriberID"
 					label-text="Subscriber Id"
-					:placeholder="subscriberId"
+					placeholder="example.subscriberId.com"
 					v-model="subscriberId"
 					type="text"
 				></CustomInput>
@@ -112,7 +112,7 @@
 					v-model="roleStatus"
 				></Dropdown>
 			</div>
-			<div class="actions" v-if="page.networkRoleDone !== true">
+			<div class="actions" v-if="!page.networkRoleDone">
 				<CurvedButton @click="createNetworkRole(networkDomain)">Save & Next</CurvedButton>
 				<CurvedButton id="cancel" @click="page.networkRoleDone = true"> Cancel</CurvedButton>
 			</div>
@@ -136,7 +136,7 @@
 				:to-be-shown="table.toBeShownForParticipantPage"
 				button-message="ENTER or GENERATE BUTTON"
 				head-warning="No Key have been created yet!"
-				warning="Please create key by clicking on"
+				warning="Please create key by clicking on "
 				index="0"
 			></CustomTable>
 			<CustomTextArea
@@ -236,10 +236,26 @@ export default {
 				if (this.listOfNetworkRolesCreated.length > 0) {
 					this.page.networkRoleDone = true;
 					this.page.participationKeyPage = true;
+					console.log("networkRoleDone");
 				}
-				if (this.listOfNetworkRolesCreated.length === 0) {
+				if (!this.listOfNetworkRolesCreated.length) {
 					this.page.networkRoleDone = false;
 					this.page.participationKeyPage = false;
+					console.log("no network role created");
+				}
+				console.log("listOfNetworkRolesCreated");
+
+			},
+			deep: true,
+			immediate: true,
+		},
+		listOfParticipantKeys: {
+			handler() {
+				if (this.listOfParticipantKeys.length > 0) {
+					this.page.participationKeyDone = true;
+				}
+				if (this.listOfParticipantKeys.length === 0) {
+					this.page.participationKeyDone = false;
 				}
 			},
 			deep: true,
@@ -260,18 +276,14 @@ export default {
 		},
 		page: {
 			handler() {
-				if (this.page.participantInfoDone === true) {
+				if (this.page.participantInfoDone) {
 					this.getNetworkRolesList(this.participant.details["id"]);
-					this.page.networkRolePage = true;
-					this.page.networkRoleDone = true;
 				}
 				if (this.page.participantInfoDone === false) {
 					this.page.networkRolePage = false;
 				}
 				if (this.page.networkRoleDone === true) {
 					this.getParticipantKeys(this.participant.details["id"]);
-					this.page.participationKeyPage = true;
-					this.page.participationKeyDone = true;
 				}
 				if (this.page.networkRoleDone === false) {
 					this.page.participationKeyPage = false;
@@ -319,13 +331,10 @@ export default {
 						return;
 					}
 					this.participant.details = response.data["network_participants"][0];
-					this.getNetworkRolesList(this.participant.details["id"]);
-					setTimeout(() => {
-						this.page.participantInfoDone = true;
-						this.page.networkRolePage = true;
-						this.page.currentTab = "networkRolePage";
-						this.page.subscriberId = this.participant.id;
-					}, 500);
+					this.page.participantInfoDone = true;
+					this.page.networkRolePage = true;
+					this.page.currentTab = "networkRolePage";
+					this.subscriberId = this.participant.id;
 				})
 				.catch((error) => {
 					console.log(error);
@@ -409,7 +418,6 @@ export default {
 		extractNetworkData: function (data) {
 			return {
 				createdAt: data["created_at"],
-				networkRoleId: data["id"],
 				domainId: data["network_domain"]["id"],
 				domainDescription: this.returnFromListOfMapOfNetworkDomains("id", data["network_domain"]["id"], "description"),
 				id: data["id"],
@@ -424,14 +432,16 @@ export default {
 			if (data.length) {
 				if (type === "multiple") {
 					for (let index in data) {
-						this.listOfNetworkRolesCreated.push(this.extractNetworkData(data[index]));
+						if (!this.returnFromListOfNetworkRolesCreated("subscriberId", data[index]["subscriber_id"], null)) {
+							this.listOfNetworkRolesCreated.push(this.extractNetworkData(data[index]));
+						}
 					}
 					this.page.networkRolePage = true;
 					this.page.networkRoleDone = true;
 					return;
 				}
 				const _data = data[0];
-				if (this.returnFromListOfNetworkRolesCreated("id", _data["id"], "id", this.extractNetworkData(_data), "add")) {
+				if (this.returnFromListOfNetworkRolesCreated("id", _data["id"], null, this.extractNetworkData(_data), "add")) {
 					this.page.networkRolePage = true;
 					this.page.networkRoleDone = true;
 					return;
@@ -463,7 +473,10 @@ export default {
 							);
 							return true;
 						}
-						return listOfNetworkRolesCreated[index][askFor];
+						if (askFor) {
+							return listOfNetworkRolesCreated[index][askFor];
+						}
+						return true;
 					}
 				}
 			}
@@ -490,7 +503,7 @@ export default {
 						console.log("Error: " + response.status);
 						return;
 					}
-					this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id", null, "remove");
+					this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, null, null, "remove");
 				})
 				.catch((error) => {
 					console.log(error);
@@ -509,6 +522,7 @@ export default {
 					if (response.data["network_roles"][0] !== undefined) {
 						this.filterNetworkRole(response.data["network_roles"], "multiple");
 					}
+					this.page.networkRolePage = true;
 				})
 				.catch((error) => {
 					console.log(error);
@@ -629,6 +643,7 @@ export default {
 					}
 					if (response.data["participant_keys"][0] !== undefined) {
 						this.filterParticipantKeys(response.data["participant_keys"]);
+						this.page.participationKeyPage = true;
 					}
 				})
 				.catch((error) => {
