@@ -211,8 +211,10 @@ export default {
 		};
 	},
 	created() {
-		this.getNetworkDomainList();
 		if (this.participantId) {
+			this.getNetworkDomainList();
+			// wait for 300ms
+			setTimeout(() => 300)
 			this.getNetworkInfo(this.participantId);
 		}
 	},
