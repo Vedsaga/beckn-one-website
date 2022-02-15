@@ -1,22 +1,22 @@
 <template>
 	<table v-if="tableData.length > 0" class="table">
 		<thead>
-		<tr>
-			<th v-for="(item, index) in headerList" :key="index">{{ item }}</th>
-		</tr>
+			<tr>
+				<th v-for="(item, index) in headerList" :key="index">{{ item }}</th>
+			</tr>
 		</thead>
 		<tbody>
-		<tr v-for="(item, index) in tableData" :key="index">
-			<td @click="onClick(item[position])" v-for="(element, index) in item" :key="index">
-				{{ element }}
-			</td>
-			<td>
-				<div class="button">
-					<SmallButton class="button-edit" @click="edit(item[position])">Edit</SmallButton>
-					<SmallButton class="button-danger" @click="remove(item[position])"> Delete</SmallButton>
-				</div>
-			</td>
-		</tr>
+			<tr v-for="(item, index) in tableData" :key="index">
+				<td @click="onClick(item[position])" v-for="(element, index) in item" :key="index">
+					{{ element }}
+				</td>
+				<td>
+					<div class="button">
+						<SmallButton class="button-edit" @click="edit(item[position])">Edit</SmallButton>
+						<SmallButton class="button-danger" @click="remove(item[position])"> Delete</SmallButton>
+					</div>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 	<div id="empty" v-else>
@@ -33,53 +33,53 @@ import SmallButton from "@/components/buttons/SmallButton";
 export default {
 	name: "CustomTable",
 	components: {
-		SmallButton
+		SmallButton,
 	},
 	data() {
 		return {
 			tableData: [],
-			position: parseInt(this.index)
+			position: parseInt(this.index),
 		};
 	},
 	props: {
 		index: {
 			type: String,
-			required: true
+			required: true,
 		},
 		dataArray: {
-			type: Array
+			type: Array,
 		},
 		remove: {
 			type: Function,
-			required: true
+			required: true,
 		},
 		edit: {
 			type: Function,
-			required: true
+			required: true,
 		},
 		headerList: {
 			type: Array,
-			required: true
+			required: true,
 		},
 		toBeShown: {
 			type: Array,
-			required: true
+			required: true,
 		},
 		headWarning: {
 			type: String,
-			required: true
+			required: true,
 		},
 		warning: {
 			type: String,
-			required: true
+			required: true,
 		},
 		buttonMessage: {
 			type: String,
-			required: true
+			required: true,
 		},
 		routeToThisId: {
 			type: Function,
-		}
+		},
 	},
 	created() {
 		this.filterDataForTable();
@@ -113,7 +113,7 @@ export default {
 					}
 				});
 			}
-		}
+		},
 	},
 	watch: {
 		dataArray: {
@@ -124,9 +124,9 @@ export default {
 				}
 			},
 			deep: true,
-			immediate: true
-		}
-	}
+			immediate: true,
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>
@@ -165,7 +165,6 @@ export default {
 				}
 			}
 		}
-
 	}
 }
 
@@ -199,7 +198,6 @@ tbody {
 			transform: scale(1.02);
 		}
 	}
-
 }
 
 .button {
