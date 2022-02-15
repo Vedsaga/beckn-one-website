@@ -3,7 +3,7 @@
 		<label :for="id"
 			><strong>{{ labelName }}</strong>
 		</label>
-		<div :id="id" class="dropdown-box">
+		<div :id="id" :class="[modelValue ? 'dropdown-box-filled' : 'dropdown-box']">
 			{{ modelValue }}
 			<img :class="[active ? 'dropdown-box-img' : '']" src="@/assets/svgs/dropdown.svg" alt="custom-dropdown icon" />
 		</div>
@@ -84,15 +84,33 @@ export default {
 		padding: 0 2.1em;
 		height: 3.3em;
 		cursor: pointer;
-		background: var(--white-bg);
+		background: var(--white-bg-header);
 		border-radius: var(--medium-border-radius);
 		align-items: center;
 		align-content: flex-end;
 		font-size: 0.9rem;
 		font-weight: 500;
-		box-shadow: var(--dark-shadow);
 		transition: all 0.2s ease-in-out;
 		position: relative;
+
+		&-filled {
+			display: flex;
+			gap: 1.25em;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: 0 2.1em;
+			height: 3.3em;
+			cursor: pointer;
+			background: var(--white-bg);
+			border-radius: var(--medium-border-radius);
+			align-items: center;
+			align-content: flex-end;
+			font-size: 0.9rem;
+			font-weight: 500;
+			box-shadow: var(--dark-shadow);
+			transition: all 0.2s ease-in-out;
+			position: relative;
+		}
 
 		img {
 			margin-left: auto;

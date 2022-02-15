@@ -162,7 +162,7 @@ import CustomTable from "@/components/tabel/CustomTable";
 import SquareButton from "@/components/buttons/SquareButton";
 import router from "@/router";
 import CustomTextArea from "@/components/inputs/CustomTextArea";
-import NetworkDomain from "@/mixin/network-domain";
+import NetworkDomain from "@/mixin/network-page";
 
 export default {
 	name: "CreateParticipant",

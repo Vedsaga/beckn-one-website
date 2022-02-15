@@ -15,6 +15,9 @@ const apiDict = {
     generateKeys: "/network_participants/generateKeys/",
     removeParticipantKey: "/participant_keys/destroy/",
     newOperatingRegion: "/operating_regions/save",
+    getCountryList: "/countries",
+    getCityList: "/cities",
+    getCityDetails: "/cities/search/",
 };
 
 export default apiDict;
