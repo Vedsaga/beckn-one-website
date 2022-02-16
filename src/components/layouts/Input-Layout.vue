@@ -1,13 +1,13 @@
 <template>
-		<div class="input-layout">
-			<div class="input-layout-field">
-				<slot name="field"></slot>
-			</div>
-				<div class="input-layout-button">
-					<CurvedButton @click="onDone" id="done">DONE</CurvedButton>
-					<CurvedButton @click="onCancel" id="cancel"> Cancel</CurvedButton>
-				</div>
+	<div class="input-layout">
+		<div class="input-layout-field">
+			<slot name="field"></slot>
 		</div>
+		<div class="input-layout-button">
+			<CurvedButton @click="onDone" id="done">DONE</CurvedButton>
+			<CurvedButton @click="onCancel" id="cancel"> Cancel</CurvedButton>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -57,5 +57,4 @@ export default {
 #cancel {
 	background: var(--dark-red);
 }
-
 </style>
