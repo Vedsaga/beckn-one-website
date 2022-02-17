@@ -216,7 +216,7 @@ export default {
 		if (this.participantId) {
 			this.getNetworkDomainList();
 			// wait for 300ms
-			setTimeout(() => 300);
+			setTimeout(() => 500);
 			this.getNetworkInfo(this.participantId);
 		}
 	},
