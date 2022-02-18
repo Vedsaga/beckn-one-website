@@ -214,7 +214,7 @@ export default {
 			operatingRegion: {
 				subscriberName: null,
 				operationId: null,
-				tableHeader: ["ID","Subscriber ID","City","Country","Active","Action", ],
+				tableHeader: ["Action","ID","Subscriber ID","City","Country","Active", ],
 				toBeShown: ["id","subscriberId", "city", "country", "active"],
 				list: [],
 				listOfMap:[],
