@@ -86,6 +86,7 @@ export default {
 	},
 	methods: {
 		onClick(item) {
+			console.log(item);
 			this.routeToThisId(item);
 		},
 		filterDataForTable() {

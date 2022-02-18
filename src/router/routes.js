@@ -43,6 +43,15 @@ export default [
         },
     },
     {
+        path: "/view-participant/:id",
+        name: "ViewParticipant",
+        component: CreateParticipant,
+        meta: {
+            title: "Create Participant",
+            requiresAuth: true,
+        },
+    },
+    {
         path: "/view-test-roles/:id",
         name: "ViewTestRoles",
         component: ViewTestRoles,

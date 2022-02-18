@@ -3,13 +3,8 @@
 		<div id="button-collections" class="main-grid-buttons">
 			<slot name="button"></slot>
 		</div>
-		<div id="message-collections" class="main-grid-message">
-			<h3>
-				<slot name="message"></slot>
-			</h3>
-			<p>
-				<slot name="info"></slot>
-			</p>
+		<div id="message-collections" class="main-grid-table">
+			<slot name="table"></slot>
 		</div>
 	</div>
 </template>
@@ -26,9 +21,9 @@ export default {
 	justify-content: space-between;
 	width: max-content;
 
-	&-message {
+	&-table {
 		display: inline-block;
-		margin-left: 15em;
+		margin-left: 5em;
 		align-items: center;
 		text-align: center;
 

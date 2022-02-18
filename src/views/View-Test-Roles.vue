@@ -1,4 +1,14 @@
 <template>
+	<div class="modal-wrapper" :class="{ show }">
+		<div class="modal">
+			<h1>Want to Delete?</h1>
+			<p>Are you sure you want to delete?</p>
+			<div class="modal-buttons">
+				<button id="no" @click="changeVisibility">cancel</button>
+				<button id="delete" @click="removeOperatingRegion(operatingRegion.operationId)">yes</button>
+			</div>
+		</div>
+	</div>
 	<PostLoginHeader />
 	<div class="main">
 		<div class="main-tabs-container">
@@ -86,23 +96,37 @@
 			</div>
 		</section>
 		<section v-if="tab.active === 'region'">
-			<ButtonEmptyContent v-if="!tab.editing">
+			<ButtonTable v-if="!tab.editing">
 				<template v-slot:button>
 					<SquareButton @click="changeEditing">
 						Region
 						<img alt="create icon" src="@/assets/svgs/create.svg" />
 					</SquareButton>
 				</template>
-				<template v-slot:message> No region have been Defined!</template>
-				<template v-slot:info> please add region in which you want to operate in.</template>
-			</ButtonEmptyContent>
+				<template v-slot:table>
+					<CustomTable
+							button-message=" by clicking the REGION BUTTON"
+							warning="please add region to your network"
+							head-warning="No region have been Defined!"
+							:to-be-shown="operatingRegion.toBeShown"
+							:header-list="operatingRegion.tableHeader"
+							:edit="editOperatingRegion"
+							:remove="changeVisibility"
+							v-model:data-array="operatingRegion.listOfMap"
+							index="0"
+							>
+
+					</CustomTable>
+				</template>
+			</ButtonTable>
+
 			<div v-if="tab.editing" class="main-input-container">
 				<InputLayout :on-done="newOperatingRegion" :on-cancel="changeEditing">
 					<template v-slot:field>
 						<Dropdown
 							id="networkRole"
 							label-name="Select Network Role"
-							v-model="operatingRegion.selectedSubscriberId"
+							v-model="operatingRegion.subscriberName"
 							:list-of-elements="networkRole.listOfSubscriberId"
 						>
 						</Dropdown>
@@ -137,10 +161,11 @@ import axios from "@/axios";
 import api_map from "@/axios/api_map";
 import CustomTab from "@/components/inputs/CustomTab";
 import SquareButton from "@/components/buttons/SquareButton";
-import ButtonEmptyContent from "@/components/layouts/Button-Empty-Content";
+import ButtonTable from "@/components/layouts/Button-Table";
 import NetworkDomain from "@/mixin/network-page";
 import InputLayout from "@/components/layouts/Input-Layout";
 import Dropdown from "@/components/dropdown/dropdown";
+import CustomTable from "@/components/tabel/CustomTable";
 
 export default {
 	name: "View-Test-Roles",
@@ -150,9 +175,10 @@ export default {
 		CustomViewInput,
 		CustomTab,
 		SquareButton,
-		ButtonEmptyContent,
+		ButtonTable,
 		InputLayout,
 		Dropdown,
+		CustomTable
 	},
 	watch: {
 		tab: {
@@ -168,6 +194,11 @@ export default {
 						this.getNetworkRoleList(this.participantId);
 					}
 				}
+				if (this.tab.active === "info" && this.networkDomain.list) {
+					if (!this.networkInfo.subscriberId)  {
+						this.getNetworkInfo(this.participantId);
+					}
+				}
 			},
 			deep: true,
 			immediate: true,
@@ -176,11 +207,18 @@ export default {
 	data() {
 		return {
 			tab: {
-				active: "info",
+				active: "region",
 				editing: false,
+				modifying: false
 			},
+			show: false,
 			operatingRegion: {
-				selectedSubscriberId: null,
+				subscriberName: null,
+				operationId: null,
+				tableHeader: ["ID","Subscriber ID","City","Country","Active","Action", ],
+				toBeShown: ["id","subscriberId", "city", "country", "active"],
+				list: [],
+				listOfMap:[],
 				country: {
 					listMapDetails: [],
 					list: [],
@@ -215,12 +253,51 @@ export default {
 	created() {
 		if (this.participantId) {
 			this.getNetworkDomainList();
-			// wait for 300ms
-			setTimeout(() => 500);
-			this.getNetworkInfo(this.participantId);
+			this.getOperatingRegions(this.participantId);
 		}
 	},
 	methods: {
+		changeVisibility: function (id) {
+			this.show = !this.show
+			this.operatingRegion.operationId = id;
+		},
+		editOperatingRegion: function(value){
+		//	extract out value from this.operationRegion.listOfMap
+			const data = this.returnDetails(this.operatingRegion.listOfMap, "id", value )
+			if(data) {
+				this.changeEditing();
+				this.operatingRegion.operationId = value;
+				this.tab.modifying = true;
+				this.operatingRegion.subscriberName = data["subscriberId"];
+				this.operatingRegion.country.selected = data["country"];
+				this.operatingRegion.country.city.selected = data["city"];
+			}
+		},
+		removeOperatingRegion: async function (operatingID) {
+			axios
+					.post(api_map.singleNetworkParticipant + this.participantId + api_map.getNetworkRoleDetails + this.networkInfo.id + api_map.removeOperatingRegion + operatingID)
+					.then((response) => {
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
+						for (let index in this.operatingRegion.listOfMap) {
+						//	remove that operatingID from this.operatingRegion.listOfMap
+							if (this.operatingRegion.listOfMap[index]["id"] === operatingID) {
+								this.operatingRegion.listOfMap = this.operatingRegion.listOfMap.filter(
+										(item) => item !== this.operatingRegion.listOfMap[index]
+								);
+								this.changeVisibility(null);
+								break;
+							}
+						}
+					})
+					.catch((error) => {
+						console.log(error);
+						console.log(error.response);
+					});
+		},
+
 		getNetworkInfo: async function (participantId) {
 			axios
 				.get(api_map.singleNetworkParticipant + participantId + api_map.getNetworkRoleDetails + this.networkInfo.id)
@@ -237,6 +314,27 @@ export default {
 				.catch((error) => {
 					console.log(error);
 				});
+		},
+		getOperatingRegions: async function(participantId) {
+			axios.get(api_map.singleNetworkParticipant + participantId + api_map.getNetworkRoleDetails + this.networkInfo.id + api_map.getOperatingRegions)
+					.then((response) => {
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return
+						}
+						const  rawData = response.data["operating_regions"];
+						if (rawData.length < 1) return;
+						this.operatingRegion.listOfMap = []
+						for (let index in rawData) {
+							this.operatingRegion.listOfMap.push({
+								id: rawData[index]["id"],
+								subscriberId: rawData[index]["network_role"]["subscriber_id"],
+								country: rawData[index]["country"]["name"],
+								city: rawData[index]["city"]["name"],
+								active: rawData[index]["active"],
+							})
+						}
+					})
 		},
 		getCounties: async function () {
 			axios.get(api_map.getCountryList).then((response) => {
@@ -311,50 +409,88 @@ export default {
 				this.operatingRegion.country.city.selected,
 				"id"
 			);
-
+			const networkRoleId = this.returnDetails(this.networkRole.listOfMap, "subscriber", this.operatingRegion.subscriberName, "id")
 			if (!cityId || !countryId) {
 				// show alert
 				alert(" county or city can not be empty ");
 				return;
 			}
+			if (this.tab.modifying) {
+				axios
+						.post(
+								api_map.singleNetworkParticipant +
+								participantId +
+								api_map.getNetworkRoleDetails +
+								this.networkInfo.id +
+								api_map.newOperatingRegion,
+								{
+									network_role_id: networkRoleId,
+									country_id: countryId,
+									city_id: cityId,
+									id: this.operatingRegion.operationId
+								}
+						)
+						.then((response) => {
+							//	if response.status !== 200 return
+							if (response.status !== 200) {
+								console.log("Error: " + response.status);
+								return;
+							}
+							this.tab.modifying = false;
+							this.getOperatingRegions();
+							this.changeEditing();
+						})
+						.catch((error) => {
+							console.log(error);
+						});
 
-			axios
-				.post(
-					api_map.singleNetworkParticipant +
-						participantId +
-						api_map.getNetworkRoleDetails +
-						this.networkInfo.id +
-						api_map.newOperatingRegion,
-					{
-						network_role_id: this.operatingRegion.networkRole,
-						country_id: countryId,
-						cityId: cityId,
-					}
-				)
-				.then((response) => {
-					//	if response.status !== 200 return
-					if (response.status !== 200) {
-						console.log("Error: " + response.status);
-						return;
-					}
-					this.changeEditing();
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+			}
+			if(!this.tab.modifying) {
+				axios
+						.post(
+								api_map.singleNetworkParticipant +
+								participantId +
+								api_map.getNetworkRoleDetails +
+								this.networkInfo.id +
+								api_map.newOperatingRegion,
+								{
+									network_role_id: networkRoleId,
+									country_id: countryId,
+									city_id: cityId,
+
+								}
+						)
+						.then((response) => {
+							//	if response.status !== 200 return
+							if (response.status !== 200) {
+								console.log("Error: " + response.status);
+								return;
+							}
+							this.getOperatingRegions();
+							this.changeEditing();
+						})
+						.catch((error) => {
+							console.log(error);
+						});
+
+			}
 		},
 
 		returnDetails: function (searchIn, searchBy, searchFor, askedFor) {
 			if (searchIn && searchBy && searchFor) {
 				for (let index in searchIn) {
 					if (searchIn[index][searchBy] === searchFor) {
-						return searchIn[index][askedFor];
+						if(askedFor)  {
+							return searchIn[index][askedFor];
+						}
+						return searchIn[index]
 					}
 				}
 			}
 		},
 		setToDefault: function () {
-			this.operatingRegion.selectedSubscriberId = null;
+			this.operatingRegion.subscriberName = null;
+			this.operatingRegion.operationId = null;
 			this.operatingRegion.country.selected = null;
 			this.operatingRegion.country.city.selected = null;
 		},
@@ -367,6 +503,75 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.modal-wrapper {
+	display: none;
+	place-items: center;
+	background-color: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+}
+
+.show {
+	display: grid;
+}
+
+.modal {
+	margin: 0.8em;
+	display: grid;
+	place-items: center;
+	background-color: var(--white-bg);
+	border-radius: 1.5em;
+	padding: 2em;
+
+	h1 {
+		width: 100%;
+		font-family: Montserrat, serif;
+		font-style: normal;
+		font-weight: bold;
+		font-size: 1.3em;
+		line-height: 1.1em;
+		margin-bottom: 0;
+	}
+
+	p {
+		margin-bottom: 2em;
+	}
+
+	&-buttons {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: flex-end;
+		gap: var(--medium-gap);
+	}
+}
+
+#no {
+	font-family: inherit;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 1em;
+	line-height: 1.2em;
+	color: var(--dark-green);
+	border: none;
+	outline: none;
+	background: transparent;
+}
+
+#delete {
+	font-family: inherit;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 1em;
+	line-height: 1.2em;
+	color: var(--white-bg);
+	border: none;
+	outline: none;
+	background: linear-gradient(90deg, #b00000 0%, #f90000 98.26%, #df0000 98.27%);
+	border-radius: 0.5em;
+	padding: 0.5em 1.5em;
+}
 .main {
 	margin-top: 5em;
 	display: grid;

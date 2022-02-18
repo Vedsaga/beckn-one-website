@@ -10,6 +10,7 @@ export default {
                 list: [],
             },
             networkRole: {
+                listOfMap: [],
                 listOfSubscriberId: [],
             },
         };
@@ -52,6 +53,10 @@ export default {
                     if (rawData.length === 0) return;
                     for (let index in rawData) {
                         this.networkRole.listOfSubscriberId.push(rawData[index]["subscriber_id"]);
+                        this.networkRole.listOfMap.push({
+                            subscriber: rawData[index]["subscriber_id"],
+                            id: rawData[index]["id"],
+                        });
                     }
                 })
                 .catch((error) => {

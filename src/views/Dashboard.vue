@@ -28,7 +28,7 @@
 			</div>
 			<div class="main-grid-info">
 				<div class="main-grid-info-button" v-for="(participant, index) in participantList" :key="index">
-					<router-link :to="'/create-participant/' + participant.participant_id">
+					<router-link :to="'/view-participant/' + participant.participant_id">
 						<div class="main-grid-info-content">
 							<span class="main-grid-info-content-text">
 								{{ participant["participant_name"] }}
