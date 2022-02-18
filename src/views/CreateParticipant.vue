@@ -117,34 +117,38 @@
 			</div>
 		</section>
 		<section class="main-grid" v-if="page.active === 'participationKeyPage'">
-			<div class="main-grid-buttons">
-				<SquareButton class="generateKey" @click="generateKey">
-					Generate
-					<img alt="create icon" src="@/assets/svgs/key.svg" />
-				</SquareButton>
-				<SquareButton @click="showPopup" class="enterKey">
-					Enter
-					<img alt="create icon" src="@/assets/svgs/key.svg" />
-				</SquareButton>
-			</div>
-			<CustomTable
-				v-model:data-array="listOfParticipantKeys"
-				:remove="changeShow"
-				:edit="showPopup"
-				:header-list="table.headerForParticipantKeyPage"
-				:to-be-shown="table.toBeShownForParticipantPage"
-				button-message="ENTER or GENERATE BUTTON"
-				head-warning="No Key have been created yet!"
-				warning="Please create key by clicking on "
-				index="0"
-			 :routing-required=false>
-			</CustomTable>
+			<ButtonTable v-if="!page.editing">
+				<template v-slot:button>
+					<SquareButton  class="generateKey" @click="generateKey">
+						Generate
+						<img alt="create icon" src="@/assets/svgs/key.svg" />
+					</SquareButton>
+					<SquareButton @click="editParticipantKey" class="enterKey">
+						Enter
+						<img alt="create icon" src="@/assets/svgs/key.svg" />
+					</SquareButton>
+				</template>
+				<template v-slot:table>
+					<CustomTable
+							v-model:data-array="listOfParticipantKeys"
+							:remove="changeShow"
+							:edit="editParticipantKey"
+							:header-list="table.headerForParticipantKeyPage"
+							:to-be-shown="table.toBeShownForParticipantPage"
+							button-message="ENTER or GENERATE BUTTON"
+							head-warning="No Key have been created yet!"
+							warning="Please create key by clicking on "
+							index="0"
+							:routing-required=false>
+					</CustomTable>
+				</template>
+			</ButtonTable>
 			<CustomTextArea
-				v-if="false"
-				label-id="testing"
-				label="testing"
+				v-if="page.editing"
+				label-id="keyId"
+				label="Please enter Unique Key Id"
 				placeholder="testing...."
-				v-model="testing"
+				v-model="key.keyId"
 			></CustomTextArea>
 		</section>
 	</div>
@@ -162,6 +166,7 @@ import SquareButton from "@/components/buttons/SquareButton";
 import router from "@/router";
 import CustomTextArea from "@/components/inputs/CustomTextArea";
 import NetworkDomain from "@/mixin/network-page";
+import ButtonTable from "@/components/layouts/Button-Table";
 
 export default {
 	name: "CreateParticipant",
@@ -174,11 +179,12 @@ export default {
 		CustomTable,
 		SquareButton,
 		CustomTextArea,
+		ButtonTable,
 	},
 	data() {
 		return {
 			table: {
-				headerForRolePage: ["Network Domain", "Role Type", "Subscriber Id", "URL", "Role Status", "Action"],
+				headerForRolePage: ["Action","Network Domain", "Role Type", "Subscriber Id", "URL", "Role Status",],
 				toBeShownForRolePage: ["domainDescription", "roleType", "subscriberId", "url", "status"],
 				headerForParticipantKeyPage: ["Key ID", "Signing Key", "Encryption Key", "Valid From", "Valid To", "Action"],
 				toBeShownForParticipantPage: ["keyId", "signingPublicKey", "encryptPublicKey", "validFrom", "validUntil"],
@@ -188,7 +194,6 @@ export default {
 				details: null,
 			},
 			show: false,
-			testing: "",
 			page: {
 				active: "participantInfoPage",
 				editing: true,
@@ -268,16 +273,17 @@ export default {
 		},
 		page: {
 			handler() {
+
 				if (this.page.participantInfoDone) {
 					this.getNetworkRolesList(this.participant.details["id"]);
 				}
-				if (this.page.participantInfoDone === false) {
+				if (!this.page.participantInfoDone ) {
 					this.page.networkRolePage = false;
 				}
-				if (this.page.networkRoleDone === true) {
+				if (this.page.networkRoleDone && this.listOfParticipantKeys.length  === 0) {
 					this.getParticipantKeys(this.participant.details["id"]);
 				}
-				if (this.page.networkRoleDone === false) {
+				if (!this.page.networkRoleDone) {
 					this.page.participationKeyPage = false;
 				}
 			},
@@ -295,8 +301,9 @@ export default {
 			this.roleStatus = null;
 			this.url = null;
 		},
-		showPopup() {
-			alert("We are working on it. Thank you for your patience :)");
+		editParticipantKey: function() {
+			this.changeEditing();
+			console.log(this.page.editing)
 		},
 		routeToThisPage(subscriberId) {
 			const _id = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id", null, null);
@@ -355,7 +362,9 @@ export default {
 				});
 		},
 		setTab: function (tab) {
+			this.page.editing = false;
 			this.page.active = tab;
+			this.set
 		},
 		setDomainDetails: function (domain) {
 			for (let index in this.networkDomain.listOfMap) {
@@ -458,7 +467,6 @@ export default {
 		},
 		setDataValueOnClickEdit: function (subscriberId) {
 			const received = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, null, null, "edit");
-			console.log(received);
 			if (received) {
 				this.networkDomain.id = this.returnDomainDetails("id", received["domainId"], "domain");
 				this.networkRole = received["roleType"];
@@ -512,7 +520,6 @@ export default {
 				for (let index in data) {
 					this.setKey(data[index]);
 					if (this.returnFromListOfParticipantKeys("keyId", data[index]["key_id"], null, "add")) {
-						// set null the all value for each key in this.keys
 						this.getDefaultValue();
 						this.page.participationKeyPage = true;
 						this.page.participationKeyDone = true;
@@ -616,17 +623,16 @@ export default {
 						console.log("Error: " + response.status);
 						return;
 					}
-					if (response.data["participant_keys"][0] !== undefined) {
-						this.filterParticipantKeys(response.data["participant_keys"]);
-						this.page.participationKeyPage = true;
-					}
+					const rawData = response.data["participant_keys"]
+					if (rawData.length < 1) return;
+					this.filterParticipantKeys(rawData);
+					this.page.participationKeyPage = true;
 				})
 				.catch((error) => {
 					console.log(error);
 				});
 		},
 		removeCollection: function (value, pageName) {
-			console.log(value, pageName);
 			if (pageName === "networkRolePage") {
 				this.removeNetworkRole(value);
 			}

@@ -7,14 +7,14 @@
 		</thead>
 		<tbody>
 			<tr v-for="(item, index) in tableData" :key="index">
-				<td @click="onClick(item[position])" v-for="(element, index) in item" :key="index">
-					{{ element }}
-				</td>
 				<td>
 					<div class="button">
 						<SmallButton class="button-edit" @click="edit(item[position])">Edit</SmallButton>
 						<SmallButton class="button-danger" @click="remove(item[position])"> Delete</SmallButton>
 					</div>
+				</td>
+				<td @click="onClick(item[position])" v-for="(element, index) in item" :key="index">
+					{{ element }}
 				</td>
 			</tr>
 		</tbody>
