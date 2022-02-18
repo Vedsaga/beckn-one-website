@@ -76,7 +76,7 @@
 					warning="Please create role by clicking on "
 					index="2"
 					:route-to-this-id="routeToThisPage"
-				>
+				 :routing-required = true>
 				</CustomTable>
 			</div>
 			<div v-if="page.editing" class="main-progress-role-input">
@@ -137,7 +137,8 @@
 				head-warning="No Key have been created yet!"
 				warning="Please create key by clicking on "
 				index="0"
-			></CustomTable>
+			 :routing-required=false>
+			</CustomTable>
 			<CustomTextArea
 				v-if="false"
 				label-id="testing"

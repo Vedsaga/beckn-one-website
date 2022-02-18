@@ -114,8 +114,7 @@
 							:remove="changeVisibility"
 							v-model:data-array="operatingRegion.listOfMap"
 							index="0"
-							>
-
+							:routing-required= false>
 					</CustomTable>
 				</template>
 			</ButtonTable>
@@ -209,7 +208,7 @@ export default {
 			tab: {
 				active: "region",
 				editing: false,
-				modifying: false
+				modifying: false,
 			},
 			show: false,
 			operatingRegion: {

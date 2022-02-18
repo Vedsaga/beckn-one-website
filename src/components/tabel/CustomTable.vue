@@ -77,6 +77,11 @@ export default {
 			type: String,
 			required: true,
 		},
+		routingRequired: {
+			type: Boolean,
+			default: false,
+			required: true,
+		},
 		routeToThisId: {
 			type: Function,
 		},
@@ -86,8 +91,9 @@ export default {
 	},
 	methods: {
 		onClick(item) {
-			console.log(item);
-			this.routeToThisId(item);
+			if (this.routingRequired) {
+				this.routeToThisId(item);
+			}
 		},
 		filterDataForTable() {
 			const toBeIncludes = this.toBeShown;
