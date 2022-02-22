@@ -27,7 +27,7 @@ export default {
 	margin: 2em auto 0;
 
 	a {
-		color: #fff;
+		color: rgba(255, 255, 255, 1);
 	}
 }
 

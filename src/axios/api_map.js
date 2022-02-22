@@ -13,6 +13,7 @@ const apiDict = {
     newNetworkRole: "/network_roles/save",
     getParticipantKeys: "/participant_keys",
     generateKeys: "/network_participants/generateKeys/",
+    newParticipantKey: "/participant_keys/save",
     removeParticipantKey: "/participant_keys/destroy/",
     newOperatingRegion: "/operating_regions/save",
     removeOperatingRegion: "/operating_regions/destroy/",

@@ -1,5 +1,5 @@
 <template>
-	<button class="curved-button" type="submit">
+	<button :disabled="disabled" class="curved-button" type="submit">
 		<slot></slot>
 	</button>
 </template>
@@ -7,6 +7,13 @@
 <script>
 export default {
 	name: "CurvedButton",
+
+	props: {
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+	},
 };
 </script>
 
@@ -21,7 +28,7 @@ export default {
 	gap: 1em;
 
 	border-radius: 2.5em; /* how to set up border-radius equal to height of the button? */
-	background: var(--orange-gardient);
+	background: var(--dark-bg-header);
 	box-shadow: var(--dark-shadow);
 	color: var(--white-bg);
 	cursor: pointer;

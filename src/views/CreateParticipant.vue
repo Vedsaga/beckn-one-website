@@ -76,7 +76,8 @@
 					warning="Please create role by clicking on "
 					index="2"
 					:route-to-this-id="routeToThisPage"
-				 :routing-required = true>
+					:routing-required="true"
+				>
 				</CustomTable>
 			</div>
 			<div v-if="page.editing" class="main-progress-role-input">
@@ -119,37 +120,79 @@
 		<section class="main-grid" v-if="page.active === 'participationKeyPage'">
 			<ButtonTable v-if="!page.editing">
 				<template v-slot:button>
-					<SquareButton  class="generateKey" @click="generateKey">
-						Generate
-						<img alt="create icon" src="@/assets/svgs/key.svg" />
-					</SquareButton>
-					<SquareButton @click="editParticipantKey" class="enterKey">
-						Enter
-						<img alt="create icon" src="@/assets/svgs/key.svg" />
-					</SquareButton>
+					<div id="gap">
+						<SquareButton class="generateKey" @click="generateKey">
+							Generate
+							<img alt="create icon" src="@/assets/svgs/key.svg" />
+						</SquareButton>
+						<SquareButton @click="setDataValueToDefault" class="enterKey">
+							Enter
+							<img alt="create icon" src="@/assets/svgs/key.svg" />
+						</SquareButton>
+					</div>
 				</template>
 				<template v-slot:table>
 					<CustomTable
-							v-model:data-array="listOfParticipantKeys"
-							:remove="changeShow"
-							:edit="editParticipantKey"
-							:header-list="table.headerForParticipantKeyPage"
-							:to-be-shown="table.toBeShownForParticipantPage"
-							button-message="ENTER or GENERATE BUTTON"
-							head-warning="No Key have been created yet!"
-							warning="Please create key by clicking on "
-							index="0"
-							:routing-required=false>
+						v-model:data-array="listOfParticipantKeys"
+						:remove="changeShow"
+						:edit="setKeysOnClickEdit"
+						:header-list="table.headerForParticipantKeyPage"
+						:to-be-shown="table.toBeShownForParticipantPage"
+						button-message="ENTER or GENERATE BUTTON"
+						head-warning="No Key have been created yet!"
+						warning="Please create key by clicking on "
+						index="0"
+						:routing-required="false"
+					>
 					</CustomTable>
 				</template>
 			</ButtonTable>
-			<CustomTextArea
-				v-if="page.editing"
-				label-id="keyId"
-				label="Please enter Unique Key Id"
-				placeholder="testing...."
-				v-model="key.keyId"
-			></CustomTextArea>
+			<div v-if="page.editing" class="main-progress-key">
+				<div class="main-progress-key-inputs">
+					<CustomInput
+						label-id="uniqueKeyId"
+						label-text="Enter Unique Key Id"
+						placeholder="example.myKey.com"
+						type="text"
+						v-model="key.keyId"
+					></CustomInput>
+					<CustomInput
+						label-id="validFrom"
+						label-text="Valid From"
+						:placeholder="todaysDate"
+						type="text"
+						v-model="key.validFrom"
+						v-model:error="page.validFromWarning"
+					></CustomInput>
+					<CustomInput
+						label-id="validTill"
+						label-text="Valid Till"
+						:placeholder="todaysDate"
+						type="text"
+						v-model="key.validUntil"
+						v-model:error="page.validUntilWarning"
+					/>
+					<CustomInput
+						label-id="signingKey"
+						label-text="Signing Key"
+						placeholder=""
+						type="text"
+						v-model="key.signingPublicKey"
+					></CustomInput>
+					<CustomInput
+						label-id="encryptionKey"
+						label-text="Encryption Key"
+						placeholder=""
+						type="text"
+						v-model="key.encryptPublicKey"
+					></CustomInput>
+				</div>
+
+				<div class="main-progress-key-buttons" v-if="page.editing">
+					<CurvedButton :disabled="page.disable" @click="newParticipantKey">DONE</CurvedButton>
+					<CurvedButton id="cancel" @click="cancelEditing"> Cancel</CurvedButton>
+				</div>
+			</div>
 		</section>
 	</div>
 </template>
@@ -164,7 +207,6 @@ import Dropdown from "@/components/dropdown/dropdown";
 import CustomTable from "@/components/tabel/CustomTable";
 import SquareButton from "@/components/buttons/SquareButton";
 import router from "@/router";
-import CustomTextArea from "@/components/inputs/CustomTextArea";
 import NetworkDomain from "@/mixin/network-page";
 import ButtonTable from "@/components/layouts/Button-Table";
 
@@ -178,17 +220,18 @@ export default {
 		Dropdown,
 		CustomTable,
 		SquareButton,
-		CustomTextArea,
 		ButtonTable,
 	},
 	data() {
 		return {
 			table: {
-				headerForRolePage: ["Action","Network Domain", "Role Type", "Subscriber Id", "URL", "Role Status",],
+				headerForRolePage: ["Action", "Network Domain", "Role Type", "Subscriber Id", "URL", "Role Status"],
 				toBeShownForRolePage: ["domainDescription", "roleType", "subscriberId", "url", "status"],
-				headerForParticipantKeyPage: ["Key ID", "Signing Key", "Encryption Key", "Valid From", "Valid To", "Action"],
+				headerForParticipantKeyPage: ["Action", "Key ID", "Signing Key", "Encryption Key", "Valid From", "Valid To"],
 				toBeShownForParticipantPage: ["keyId", "signingPublicKey", "encryptPublicKey", "validFrom", "validUntil"],
 			},
+			//    get todays date in Day-Month-Year format
+			todaysDate: new Date().toISOString().substring(0, 10),
 			participant: {
 				id: this.$route.params.id ? this.$route.params.id : null,
 				details: null,
@@ -197,13 +240,16 @@ export default {
 			page: {
 				active: "participantInfoPage",
 				editing: true,
+				modify: false,
+				validFromWarning: false,
+				validUntilWarning: false,
+				disable: true,
 				participantInfoDone: false,
 				networkRolePage: false,
 				networkRoleDone: false,
 				participationKeyPage: false,
 				participationKeyDone: false,
 			},
-
 			domainID: null,
 			domainDescription: null,
 			networkRole: null,
@@ -273,18 +319,40 @@ export default {
 		},
 		page: {
 			handler() {
-
 				if (this.page.participantInfoDone) {
 					this.getNetworkRolesList(this.participant.details["id"]);
 				}
-				if (!this.page.participantInfoDone ) {
+				if (!this.page.participantInfoDone) {
 					this.page.networkRolePage = false;
 				}
-				if (this.page.networkRoleDone && this.listOfParticipantKeys.length  === 0) {
+				if (this.page.networkRoleDone && this.listOfParticipantKeys.length === 0) {
 					this.getParticipantKeys(this.participant.details["id"]);
 				}
 				if (!this.page.networkRoleDone) {
 					this.page.participationKeyPage = false;
+				}
+				if (this.page.validFromWarning || this.page.validUntilWarning) {
+					this.page.disable = true;
+				} else {
+					this.page.disable = false;
+				}
+			},
+			deep: true,
+			immediate: true,
+		},
+		key: {
+			handler() {
+				if (this.page.editing) {
+					if (this.checkInputDateFormat(this.key.validFrom)) {
+						this.page.validFromWarning = false;
+					} else {
+						this.page.validFromWarning = true;
+					}
+					if (this.checkInputDateFormat(this.key.validUntil)) {
+						this.page.validUntilWarning = false;
+					} else {
+						this.page.validUntilWarning = true;
+					}
 				}
 			},
 			deep: true,
@@ -292,18 +360,79 @@ export default {
 		},
 	},
 	methods: {
+		checkInputDateFormat: function (value) {
+			//  make sure that length could be 10 or 19
+			if (value) {
+				if (value.length === 10) {
+					value = value + " 00:00:00";
+				}
+				if (value.length !== 19) {
+					return false;
+				}
+				// make sure that value only contain number and - and : and space and it is not empty and it is not null and it is in YYYY-MM-DD HH:MM:SS format or YYYY-MM-DD format
+				var regex = /^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/;
+				if (regex.test(value)) {
+					var year = value.substring(0, 4);
+					var month = value.substring(5, 7);
+					var day = value.substring(8, 10);
+					var hour = value.substring(11, 13);
+					var min = value.substring(14, 16);
+					var sec = value.substring(17, 19);
+
+					if (year < 2020 || year > 2100) {
+						return false;
+					}
+					if (month < 1 || month > 12) {
+						return false;
+					}
+					// how to check if year is leap year or not
+					if (year % 4 === 0 || year % 4 === 2) {
+						if (day < 1 || day > 29) {
+							return false;
+						}
+					} else {
+						if (day < 1 || day > 31) {
+							return false;
+						}
+						//  make sure the day is not 31 in months that have 30 days
+						if (month === 4 || month === 6 || month === 9 || month === 11) {
+							if (day > 30) {
+								return false;
+							}
+						}
+						if (month === 2) {
+							if (day > 28) {
+								return false;
+							}
+						}
+					}
+
+					if (hour < 0 || hour > 23) {
+						return false;
+					}
+					if (min < 0 || min > 59) {
+						return false;
+					}
+					if (sec < 0 || sec > 59) {
+						return false;
+					}
+
+					return true;
+				} else {
+					return false;
+				}
+			}
+			return false;
+		},
 		setDataValueToDefault: function () {
 			this.changeEditing();
+			this.page.modify = false;
 			this.networkDomain.id = null;
 			this.domainID = null;
 			this.domainDescription = null;
 			this.networkRole = null;
 			this.roleStatus = null;
 			this.url = null;
-		},
-		editParticipantKey: function() {
-			this.changeEditing();
-			console.log(this.page.editing)
 		},
 		routeToThisPage(subscriberId) {
 			const _id = this.returnFromListOfNetworkRolesCreated("subscriberId", subscriberId, "id", null, null);
@@ -312,6 +441,11 @@ export default {
 		},
 		changeEditing() {
 			this.page.editing = !this.page.editing;
+		},
+		cancelEditing: function () {
+			this.changeEditing();
+			this.page.modify = false;
+			this.getDefaultValue();
 		},
 		returnBoolOnCheck(data) {
 			//	 if data is true then return true else return false
@@ -364,7 +498,7 @@ export default {
 		setTab: function (tab) {
 			this.page.editing = false;
 			this.page.active = tab;
-			this.set
+			this.set;
 		},
 		setDomainDetails: function (domain) {
 			for (let index in this.networkDomain.listOfMap) {
@@ -590,8 +724,17 @@ export default {
 							this.listOfParticipantKeys = listOfParticipantKeys.filter(
 								(item) => item !== listOfParticipantKeys[index]
 							);
+							return true;
 						}
-						return listOfParticipantKeys[index][askFor];
+						if (askFor) {
+							return listOfParticipantKeys[index][askFor];
+						}
+						return listOfParticipantKeys[index];
+					} else {
+						if (action === "add") {
+							this.listOfParticipantKeys.push(this.key);
+							return true;
+						}
 					}
 				}
 			}
@@ -623,7 +766,7 @@ export default {
 						console.log("Error: " + response.status);
 						return;
 					}
-					const rawData = response.data["participant_keys"]
+					const rawData = response.data["participant_keys"];
 					if (rawData.length < 1) return;
 					this.filterParticipantKeys(rawData);
 					this.page.participationKeyPage = true;
@@ -638,6 +781,75 @@ export default {
 			}
 			if (pageName === "participationKeyPage") {
 				this.removeParticipantKey(value);
+			}
+		},
+		setKeysOnClickEdit: function (keyId) {
+			const data = this.returnFromListOfParticipantKeys("keyId", keyId, null, null);
+			if (data) {
+				this.setDataValueToDefault();
+				this.page.modify = true;
+				this.key.validFrom = data["validFrom"];
+				this.key.validUntil = data["validUntil"];
+				this.key.encryptPublicKey = data["encryptPublicKey"];
+				this.key.signingPublicKey = data["signingPublicKey"];
+				this.key.keyId = data["keyId"];
+				this.key.id = data["id"];
+			}
+		},
+		newParticipantKey: async function () {
+			if (this.page.modify) {
+				axios
+					.post(api_map.singleNetworkParticipant + this.participant.details["id"] + api_map.newParticipantKey, {
+						network_participant_id: this.participant.details["id"],
+						valid_from: this.key.validFrom,
+						valid_until: this.key.validUntil,
+						encr_public_key: this.key.encryptPublicKey,
+						signing_public_key: this.key.signingPublicKey,
+						key_id: this.key.keyId,
+					})
+					.then((response) => {
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
+						const rawData = response.data;
+						if (rawData.length < 1) {
+							this.cancelEditing();
+							return;
+						}
+
+						this.filterParticipantKeys(rawData["participant_keys"]);
+						this.cancelEditing();
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+			if (!this.page.modify) {
+				axios
+					.post(api_map.singleNetworkParticipant + this.participant.details["id"] + api_map.newParticipantKey, {
+						network_participant_id: this.participant.details["id"],
+						valid_from: this.key.validFrom,
+						valid_until: this.key.validUntil,
+						encr_public_key: this.key.encryptPublicKey,
+						signing_public_key: this.key.signingPublicKey,
+					})
+					.then((response) => {
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
+						const rawData = response.data;
+						if (rawData.length < 1) {
+							this.cancelEditing();
+							return;
+						}
+						this.filterParticipantKeys(rawData["participant_keys"]);
+						this.cancelEditing();
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 			}
 		},
 	},
@@ -812,22 +1024,24 @@ export default {
 
 		&-key {
 			display: grid;
-			grid-gap: 1em;
-			margin-right: auto;
-		}
-	}
+			gap: 3em;
 
-	&-key {
-		display: flex;
-		margin: 0 auto;
-		flex-direction: column;
-		align-content: center;
-		align-items: center;
-		align-self: center;
-		position: relative;
-		z-index: 100;
-		bottom: 20em;
-		float: top;
+			&-inputs {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 3rem;
+				flex-flow: row wrap;
+			}
+
+			&-buttons {
+				display: grid;
+				max-width: max-content;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1em;
+				align-items: center;
+				justify-content: center;
+			}
+		}
 	}
 }
 
@@ -862,5 +1076,10 @@ export default {
 		background: var(--light-blue);
 		color: var(--white-bg);
 	}
+}
+
+#gap {
+	display: grid;
+	gap: 1em;
 }
 </style>

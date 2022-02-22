@@ -105,16 +105,17 @@
 				</template>
 				<template v-slot:table>
 					<CustomTable
-							button-message=" by clicking the REGION BUTTON"
-							warning="please add region to your network"
-							head-warning="No region have been Defined!"
-							:to-be-shown="operatingRegion.toBeShown"
-							:header-list="operatingRegion.tableHeader"
-							:edit="editOperatingRegion"
-							:remove="changeVisibility"
-							v-model:data-array="operatingRegion.listOfMap"
-							index="0"
-							:routing-required= false>
+						button-message=" by clicking the REGION BUTTON"
+						warning="please add region to your network"
+						head-warning="No region have been Defined!"
+						:to-be-shown="operatingRegion.toBeShown"
+						:header-list="operatingRegion.tableHeader"
+						:edit="editOperatingRegion"
+						:remove="changeVisibility"
+						v-model:data-array="operatingRegion.listOfMap"
+						index="0"
+						:routing-required="false"
+					>
 					</CustomTable>
 				</template>
 			</ButtonTable>
@@ -177,7 +178,7 @@ export default {
 		ButtonTable,
 		InputLayout,
 		Dropdown,
-		CustomTable
+		CustomTable,
 	},
 	watch: {
 		tab: {
@@ -194,7 +195,7 @@ export default {
 					}
 				}
 				if (this.tab.active === "info" && this.networkDomain.list) {
-					if (!this.networkInfo.subscriberId)  {
+					if (!this.networkInfo.subscriberId) {
 						this.getNetworkInfo(this.participantId);
 					}
 				}
@@ -214,10 +215,10 @@ export default {
 			operatingRegion: {
 				subscriberName: null,
 				operationId: null,
-				tableHeader: ["Action","ID","Subscriber ID","City","Country","Active", ],
-				toBeShown: ["id","subscriberId", "city", "country", "active"],
+				tableHeader: ["Action", "ID", "Subscriber ID", "City", "Country", "Active"],
+				toBeShown: ["id", "subscriberId", "city", "country", "active"],
 				list: [],
-				listOfMap:[],
+				listOfMap: [],
 				country: {
 					listMapDetails: [],
 					list: [],
@@ -257,13 +258,13 @@ export default {
 	},
 	methods: {
 		changeVisibility: function (id) {
-			this.show = !this.show
+			this.show = !this.show;
 			this.operatingRegion.operationId = id;
 		},
-		editOperatingRegion: function(value){
-		//	extract out value from this.operationRegion.listOfMap
-			const data = this.returnDetails(this.operatingRegion.listOfMap, "id", value )
-			if(data) {
+		editOperatingRegion: function (value) {
+			//	extract out value from this.operationRegion.listOfMap
+			const data = this.returnDetails(this.operatingRegion.listOfMap, "id", value);
+			if (data) {
 				this.changeEditing();
 				this.operatingRegion.operationId = value;
 				this.tab.modifying = true;
@@ -274,27 +275,34 @@ export default {
 		},
 		removeOperatingRegion: async function (operatingID) {
 			axios
-					.post(api_map.singleNetworkParticipant + this.participantId + api_map.getNetworkRoleDetails + this.networkInfo.id + api_map.removeOperatingRegion + operatingID)
-					.then((response) => {
-						if (response.status !== 200) {
-							console.log("Error: " + response.status);
-							return;
-						}
-						for (let index in this.operatingRegion.listOfMap) {
+				.post(
+					api_map.singleNetworkParticipant +
+						this.participantId +
+						api_map.getNetworkRoleDetails +
+						this.networkInfo.id +
+						api_map.removeOperatingRegion +
+						operatingID
+				)
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					for (let index in this.operatingRegion.listOfMap) {
 						//	remove that operatingID from this.operatingRegion.listOfMap
-							if (this.operatingRegion.listOfMap[index]["id"] === operatingID) {
-								this.operatingRegion.listOfMap = this.operatingRegion.listOfMap.filter(
-										(item) => item !== this.operatingRegion.listOfMap[index]
-								);
-								this.changeVisibility(null);
-								break;
-							}
+						if (this.operatingRegion.listOfMap[index]["id"] === operatingID) {
+							this.operatingRegion.listOfMap = this.operatingRegion.listOfMap.filter(
+								(item) => item !== this.operatingRegion.listOfMap[index]
+							);
+							this.changeVisibility(null);
+							break;
 						}
-					})
-					.catch((error) => {
-						console.log(error);
-						console.log(error.response);
-					});
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+					console.log(error.response);
+				});
 		},
 
 		getNetworkInfo: async function (participantId) {
@@ -314,26 +322,33 @@ export default {
 					console.log(error);
 				});
 		},
-		getOperatingRegions: async function(participantId) {
-			axios.get(api_map.singleNetworkParticipant + participantId + api_map.getNetworkRoleDetails + this.networkInfo.id + api_map.getOperatingRegions)
-					.then((response) => {
-						if (response.status !== 200) {
-							console.log("Error: " + response.status);
-							return
-						}
-						const  rawData = response.data["operating_regions"];
-						if (rawData.length < 1) return;
-						this.operatingRegion.listOfMap = []
-						for (let index in rawData) {
-							this.operatingRegion.listOfMap.push({
-								id: rawData[index]["id"],
-								subscriberId: rawData[index]["network_role"]["subscriber_id"],
-								country: rawData[index]["country"]["name"],
-								city: rawData[index]["city"]["name"],
-								active: rawData[index]["active"],
-							})
-						}
-					})
+		getOperatingRegions: async function (participantId) {
+			axios
+				.get(
+					api_map.singleNetworkParticipant +
+						participantId +
+						api_map.getNetworkRoleDetails +
+						this.networkInfo.id +
+						api_map.getOperatingRegions
+				)
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					const rawData = response.data["operating_regions"];
+					if (rawData.length < 1) return;
+					this.operatingRegion.listOfMap = [];
+					for (let index in rawData) {
+						this.operatingRegion.listOfMap.push({
+							id: rawData[index]["id"],
+							subscriberId: rawData[index]["network_role"]["subscriber_id"],
+							country: rawData[index]["country"]["name"],
+							city: rawData[index]["city"]["name"],
+							active: rawData[index]["active"],
+						});
+					}
+				});
 		},
 		getCounties: async function () {
 			axios.get(api_map.getCountryList).then((response) => {
@@ -408,7 +423,12 @@ export default {
 				this.operatingRegion.country.city.selected,
 				"id"
 			);
-			const networkRoleId = this.returnDetails(this.networkRole.listOfMap, "subscriber", this.operatingRegion.subscriberName, "id")
+			const networkRoleId = this.returnDetails(
+				this.networkRole.listOfMap,
+				"subscriber",
+				this.operatingRegion.subscriberName,
+				"id"
+			);
 			if (!cityId || !countryId) {
 				// show alert
 				alert(" county or city can not be empty ");
@@ -416,62 +436,59 @@ export default {
 			}
 			if (this.tab.modifying) {
 				axios
-						.post(
-								api_map.singleNetworkParticipant +
-								participantId +
-								api_map.getNetworkRoleDetails +
-								this.networkInfo.id +
-								api_map.newOperatingRegion,
-								{
-									network_role_id: networkRoleId,
-									country_id: countryId,
-									city_id: cityId,
-									id: this.operatingRegion.operationId
-								}
-						)
-						.then((response) => {
-							//	if response.status !== 200 return
-							if (response.status !== 200) {
-								console.log("Error: " + response.status);
-								return;
-							}
-							this.tab.modifying = false;
-							this.getOperatingRegions();
-							this.changeEditing();
-						})
-						.catch((error) => {
-							console.log(error);
-						});
-
+					.post(
+						api_map.singleNetworkParticipant +
+							participantId +
+							api_map.getNetworkRoleDetails +
+							this.networkInfo.id +
+							api_map.newOperatingRegion,
+						{
+							network_role_id: networkRoleId,
+							country_id: countryId,
+							city_id: cityId,
+							id: this.operatingRegion.operationId,
+						}
+					)
+					.then((response) => {
+						//	if response.status !== 200 return
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
+						this.tab.modifying = false;
+						this.getOperatingRegions();
+						this.changeEditing();
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 			}
-			if(!this.tab.modifying) {
+			if (!this.tab.modifying) {
 				axios
-						.post(
-								api_map.singleNetworkParticipant +
-								participantId +
-								api_map.getNetworkRoleDetails +
-								this.networkInfo.id +
-								api_map.newOperatingRegion,
-								{
-									network_role_id: networkRoleId,
-									country_id: countryId,
-									city_id: cityId,
-
-								}
-						)
-						.then((response) => {
-							//	if response.status !== 200 return
-							if (response.status !== 200) {
-								console.log("Error: " + response.status);
-								return;
-							}
-							this.getOperatingRegions();
-							this.changeEditing();
-						})
-						.catch((error) => {
-							console.log(error);
-						});
-
+					.post(
+						api_map.singleNetworkParticipant +
+							participantId +
+							api_map.getNetworkRoleDetails +
+							this.networkInfo.id +
+							api_map.newOperatingRegion,
+						{
+							network_role_id: networkRoleId,
+							country_id: countryId,
+							city_id: cityId,
+						}
+					)
+					.then((response) => {
+						//	if response.status !== 200 return
+						if (response.status !== 200) {
+							console.log("Error: " + response.status);
+							return;
+						}
+						this.getOperatingRegions();
+						this.changeEditing();
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 			}
 		},
 
@@ -479,10 +496,10 @@ export default {
 			if (searchIn && searchBy && searchFor) {
 				for (let index in searchIn) {
 					if (searchIn[index][searchBy] === searchFor) {
-						if(askedFor)  {
+						if (askedFor) {
 							return searchIn[index][askedFor];
 						}
-						return searchIn[index]
+						return searchIn[index];
 					}
 				}
 			}
