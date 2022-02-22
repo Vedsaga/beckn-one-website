@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import axios from "@/axios";
+import api_map from "@/axios/api_map";
 export default {
 	name: "PostLoginHeader",
 
@@ -74,12 +76,24 @@ export default {
 
 	methods: {
 		logout: function () {
-			// clear the local storage
-			localStorage.clear();
-			// if local storage is empty, redirect to login page
-			if (localStorage.length === 0) {
-				this.$router.push("/login");
-			}
+			axios
+				.post(api_map.logout)
+				.then((response) => {
+					if (response.status !== 200) {
+						console.log("Error: " + response.status);
+						return;
+					}
+					console.log(response.data);
+					localStorage.clear();
+					// if local storage is empty, redirect to login page
+					if (localStorage.length === 0) {
+						this.$router.push("/login");
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+					console.log(error.response);
+				});
 		},
 	},
 };
