@@ -9,6 +9,7 @@
 			:value="modelValue"
 			@input="updateValue($event.target.value)"
 			:type="type"
+			:disabled="disabled"
 		/>
 	</div>
 </template>
@@ -19,6 +20,10 @@ export default {
 		placeholder: {
 			type: String,
 			required: true,
+		},
+		disabled: {
+			type: Boolean,
+			default: false,
 		},
 		error: {
 			type: Boolean,

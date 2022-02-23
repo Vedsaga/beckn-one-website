@@ -46,6 +46,7 @@
 				label-id="participantId"
 				label-text="Please Enter Participant Id"
 				type="text"
+				:disabled="!page.editing"
 			/>
 			<div class="main-progress-participant-info">
 				<img src="@/assets/svgs/info.svg" alt="" />
@@ -133,7 +134,7 @@
 				</template>
 				<template v-slot:table>
 					<CustomTable
-						v-model:data-array="listOfParticipantKeys"
+						:data-array="listOfParticipantKeys"
 						:remove="changeShow"
 						:edit="setKeysOnClickEdit"
 						:header-list="table.headerForParticipantKeyPage"
@@ -848,7 +849,8 @@ export default {
 						this.cancelEditing();
 					})
 					.catch((error) => {
-						console.log(error);
+						// show alert popup if error occurs
+						alert("Error: " + error);
 					});
 			}
 		},
